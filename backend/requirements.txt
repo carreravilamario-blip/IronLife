@@ -1,0 +1,22 @@
+# ============================================================
+#  Dependencias del backend de IronLife
+#  Instalar con:  pip install -r requirements.txt
+# ============================================================
+
+# Servidor y framework web
+fastapi
+uvicorn[standard]
+
+# Base de datos
+sqlalchemy
+psycopg[binary]          # driver PostgreSQL para Python
+
+# Configuración y variables de entorno
+pydantic-settings        # valida el .env al arrancar
+python-dotenv            # lectura de .env (usado por pydantic-settings)
+
+# Seguridad / autenticación
+bcrypt                   # hashing de contraseñas
+pyjwt                    # tokens JWT
+email-validator          # validación de emails en schemas
+python-multipart         # formularios OAuth2 del login

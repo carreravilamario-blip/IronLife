@@ -1,0 +1,32 @@
+# ── Python ────────────────────────────────────────────────────
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# ── Variables de entorno ───────────────────────────────────────
+# El .env contiene secretos → NUNCA a git
+.env
+# El .env.example es la plantilla sin secretos → SÍ a git
+!.env.example
+
+# ── Node / frontend ───────────────────────────────────────────
+node_modules/
+dist/
+
+# ── Base de datos local ────────────────────────────────────────
+*.db
+*.sqlite
+
+# ── Sistema operativo ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs ──────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+
+# ── Claude Code (memoria de conversación) ─────────────────────
+.claude/
