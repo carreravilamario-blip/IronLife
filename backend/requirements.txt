@@ -9,7 +9,7 @@ uvicorn[standard]
 
 # Base de datos
 sqlalchemy
-psycopg[binary]          # driver PostgreSQL para Python
+psycopg2-binary          # driver PostgreSQL para Python
 
 # Configuración y variables de entorno
 pydantic-settings        # valida el .env al arrancar
