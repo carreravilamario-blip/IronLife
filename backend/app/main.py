@@ -6,7 +6,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
+from app.database import engine
+from app.models import Base
 from app.routers import auth, entrenamiento
+
+# Crea las tablas si no existen (seguro en producción: IF NOT EXISTS)
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="IronLife API",
