@@ -49,6 +49,14 @@ def _seed_ejercicios_si_vacio():
 
 _seed_ejercicios_si_vacio()
 
+def _migraciones():
+    from sqlalchemy import text
+    with engine.connect() as conn:
+        conn.execute(text("ALTER TABLE sesiones ADD COLUMN IF NOT EXISTS duracion_minutos INTEGER;"))
+        conn.commit()
+
+_migraciones()
+
 app = FastAPI(
     title="IronLife API",
     version="0.1.0",
