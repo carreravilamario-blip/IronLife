@@ -9,11 +9,11 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { WK as V } from "../ui/theme";
-import {
-  MESES_CORTOS, MESES_FULL, DIAS_SEMANA,
-  COLORES_RUTINA, diaSemana, volumenSesion, seriesSesion,
-  fmtDur, fmtReloj, fmtRitmo, fmtVol,
-} from "../data/historialData";
+import { COLORES_RUTINA } from "../constants/routines";
+import { MONTHS_SHORT, MONTHS_ES, WEEKDAYS_FULL } from "../constants/dates";
+import { fmtDur, fmtReloj, fmtRitmo, fmtVol } from "../utils/format";
+import { volumenSesion, seriesSesion } from "../utils/training";
+import { diaSemana } from "../utils/dates";
 import { useAuth } from "../context";
 import { obtenerHistorial } from "../api/index";
 
@@ -102,7 +102,7 @@ function FilaSesion({ s, selected, onClick }) {
       {/* fecha */}
       <div style={{ flexShrink: 0, width: 46, textAlign: "center" }}>
         <div style={{ fontFamily: "var(--display)", fontSize: 24, color: "var(--text)", lineHeight: 1 }}>{s.d}</div>
-        <div style={{ fontFamily: "var(--mono)", fontSize: 10, textTransform: "uppercase", color: "var(--faint)", marginTop: 2 }}>{MESES_CORTOS[s.m]}</div>
+        <div style={{ fontFamily: "var(--mono)", fontSize: 10, textTransform: "uppercase", color: "var(--faint)", marginTop: 2 }}>{MONTHS_SHORT[s.m]}</div>
       </div>
       {/* barra de color */}
       <div style={{ width: 3, alignSelf: "stretch", borderRadius: 3, background: color, flexShrink: 0 }} />
@@ -131,7 +131,7 @@ function DetalleSesion({ s }) {
   if (!s) return null;
 
   const color  = s.type === "cardio" ? COLORES_RUTINA.cardio : (COLORES_RUTINA[s.routineId] || "var(--accent)");
-  const fechaFull = `${diaSemana(s)}, ${s.d} de ${MESES_FULL[s.m].toLowerCase()}`;
+  const fechaFull = `${diaSemana(s)}, ${s.d} de ${MONTHS_ES[s.m].toLowerCase()}`;
 
   const stats = s.type === "fuerza"
     ? [["Volumen", fmtVol(volumenSesion(s))], ["Series", seriesSesion(s)], ["Ejerc.", s.exercises.length], ["Duración", fmtDur(s.mins)]]
@@ -310,7 +310,7 @@ export default function PantallaHistorial() {
                   {/* Separador de mes */}
                   <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "4px 2px 12px" }}>
                     <span style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--muted)" }}>
-                      {MESES_FULL[g.m]} {g.y}
+                      {MONTHS_ES[g.m]} {g.y}
                     </span>
                     <span style={{ flex: 1, height: 1, background: "var(--line2)" }} />
                     <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--faint)" }}>{g.items.length}</span>

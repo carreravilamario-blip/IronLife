@@ -12,10 +12,9 @@ import { useAuth } from "../context";
 import { WK as H, hexA } from "../ui/theme";
 import Calendario from "../components/Calendario";
 import TarjetaCardio from "../components/TarjetaCardio";
-import {
-  ROUTINE_META as HRM, MONTHS_ES as HMES, WEEKDAYS_FULL as WDF,
-  keyFromDate as kfd, parseKey as pk, addDays as addD, mondayIndex as hmIdx,
-} from "../data/inicioData";
+import { ROUTINE_META as HRM } from "../constants/routines";
+import { MONTHS_ES as HMES, WEEKDAYS_FULL as WDF } from "../constants/dates";
+import { keyFromDate as kfd, parseKey as pk, addDays as addD, mondayIndex as hmIdx, dateKey } from "../utils/dates";
 
 const STORE = "ironlife_calendar_v3";
 const TODAY = new Date(2026, 5, 1); // 1 de junio de 2026 (fecha de referencia del demo)

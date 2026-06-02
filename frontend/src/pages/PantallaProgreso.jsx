@@ -9,7 +9,7 @@
 
 import { useState, useEffect } from "react";
 import { WK as G, ACCENT_HEX } from "../ui/theme";
-import { LineChart, VolumeBars, HBars, pHexA as pa } from "../ui/charts";
+import { LineChart, VolumeBars, HBars, pHexA as pa } from "../components/Charts";
 import { useAuth } from "../context";
 import { obtenerEstadisticas } from "../api";
 

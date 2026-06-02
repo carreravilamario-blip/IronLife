@@ -5,7 +5,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { WK as K, hexA } from "../ui/theme";
-import { CARDIO_META as KCM } from "../data/inicioData";
+import { CARDIO_META as KCM } from "../constants/routines";
 
 export function fmtTime(sec) {
   const h = Math.floor(sec / 3600);

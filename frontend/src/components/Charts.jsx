@@ -3,7 +3,7 @@
 //  panel de Progreso: LineChart, VolumeBars y HBars.
 // ============================================================
 
-import { WK as P } from "./theme";
+import { WK as P } from "../ui/theme";
 
 export function pHexA(hex, a) {
   const n = hex.replace("#", "");

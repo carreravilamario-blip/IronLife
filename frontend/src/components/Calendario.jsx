@@ -4,10 +4,9 @@
 // ============================================================
 
 import { WK as C, hexA, ACCENT_HEX } from "../ui/theme";
-import {
-  ROUTINE_META as RM, CARDIO_META as CM, MONTHS_ES as MES,
-  WEEKDAYS_ES as WD, dateKey as dkey, mondayIndex as mIdx,
-} from "../data/inicioData";
+import { MONTHS_ES as MES, WEEKDAYS_ES as WD } from "../constants/dates";
+import { dateKey as dkey, mondayIndex as mIdx } from "../utils/dates";
+import { ROUTINE_META as RM, CARDIO_META as CM } from "../constants/routines";
 
 const IcoCorrer = ({ color }) => (
   <svg width="8" height="8" viewBox="0 0 24 24" fill={color}>
