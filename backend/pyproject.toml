@@ -14,6 +14,7 @@ dependencies = [
     "pyjwt",
     "email-validator",
     "python-multipart",
+    "alembic>=1.18.4",
 ]
 
 [tool.uv]
