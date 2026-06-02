@@ -15,29 +15,9 @@ import TarjetaCardio from "../components/TarjetaCardio";
 import {
   ROUTINE_META as HRM, MONTHS_ES as HMES, WEEKDAYS_FULL as WDF,
   keyFromDate as kfd, parseKey as pk, addDays as addD, mondayIndex as hmIdx,
-  dateKey,
 } from "../data/inicioData";
-import { SESIONES_DEMO } from "../data/historialData";
 
-// Clave v3: genera el seed inicial desde SESIONES_DEMO (misma fuente que el historial)
-// para que ambas pantallas muestren datos coherentes.
 const STORE = "ironlife_calendar_v3";
-
-// Construye el log del calendario a partir de los datos demo del historial.
-function seedLogFromHistorial() {
-  const log = {};
-  SESIONES_DEMO.forEach((s) => {
-    const key = dateKey(s.y, s.m, s.d);
-    const entry = log[key] || { routineId: null, cardio: null };
-    if (s.type === "fuerza") {
-      entry.routineId = s.routineId;
-    } else if (s.type === "cardio") {
-      entry.cardio = { sec: s.sec, km: s.km };
-    }
-    log[key] = entry;
-  });
-  return log;
-}
 const TODAY = new Date(2026, 5, 1); // 1 de junio de 2026 (fecha de referencia del demo)
 const TODAY_KEY = kfd(TODAY);
 
@@ -73,8 +53,8 @@ export default function PantallaInicio() {
     try {
       const s = localStorage.getItem(STORE);
       if (s) return JSON.parse(s);
-    } catch (e) { /* noop */ }
-    return seedLogFromHistorial();
+    } catch (e) {}
+    return {};
   });
   const initialFocus = useMemo(() => pk(latestKey(log)), []); // eslint-disable-line react-hooks/exhaustive-deps
   const [view, setView] = useState({ y: initialFocus.getFullYear(), m: initialFocus.getMonth() });

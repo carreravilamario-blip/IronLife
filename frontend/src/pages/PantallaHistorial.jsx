@@ -2,16 +2,15 @@
 //  PantallaHistorial — Lista cronológica de sesiones con panel
 //  de detalle. Implementa el diseño "IronLife Historial".
 //
-//  Fuentes de datos (más reciente primero):
+//  Fuente de datos:
 //  1. Sesiones reales desde la API (/api/historial).
-//  2. Sesiones de demostración de historialData.js
-//     (solo si el usuario no tiene sesiones reales en la API).
+//  2. Sesiones guardadas en localStorage (ironlife_history_v1).
 // ============================================================
 
 import { useState, useMemo, useEffect } from "react";
 import { WK as V } from "../ui/theme";
 import {
-  SESIONES_DEMO, MESES_CORTOS, MESES_FULL, DIAS_SEMANA,
+  MESES_CORTOS, MESES_FULL, DIAS_SEMANA,
   COLORES_RUTINA, diaSemana, volumenSesion, seriesSesion,
   fmtDur, fmtReloj, fmtRitmo, fmtVol,
 } from "../data/historialData";
@@ -129,11 +128,7 @@ function FilaSesion({ s, selected, onClick }) {
 
 // ── Panel de detalle ──────────────────────────────────────────
 function DetalleSesion({ s }) {
-  if (!s) return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 300, color: "var(--faint)", fontFamily: "var(--mono)", fontSize: 13 }}>
-      Selecciona una sesión
-    </div>
-  );
+  if (!s) return null;
 
   const color  = s.type === "cardio" ? COLORES_RUTINA.cardio : (COLORES_RUTINA[s.routineId] || "var(--accent)");
   const fechaFull = `${diaSemana(s)}, ${s.d} de ${MESES_FULL[s.m].toLowerCase()}`;
@@ -248,23 +243,20 @@ export default function PantallaHistorial() {
       });
   }, [token]);
 
-  // Mezcla: API (primero) + localStorage + demo (solo si no hay sesiones de API)
+  // Mezcla: API + localStorage, ordenadas por fecha descendente
   const todas = useMemo(() => {
     let guardadas = [];
     try { guardadas = JSON.parse(localStorage.getItem("ironlife_history_v1") || "[]"); } catch { /* noop */ }
 
-    const hayApiSesiones = apiSesiones.length > 0;
-    const fallback = hayApiSesiones ? [] : SESIONES_DEMO;
-
-    return [...apiSesiones, ...guardadas, ...fallback]
+    return [...apiSesiones, ...guardadas]
       .sort((a, b) => new Date(b.y, b.m, b.d) - new Date(a.y, a.m, a.d));
   }, [apiSesiones]);
 
   const lista = todas.filter((s) => filtro === "todo" || s.type === filtro);
 
-  // Selección inicial: primera sesión de la lista
+  // Selección: primera sesión de la lista si no hay selección manual
   const idActual = selId ?? (lista[0]?.id || null);
-  const seleccionada = todas.find((s) => s.id === idActual) || lista[0] || null;
+  const seleccionada = todas.find((s) => s.id === idActual) || null;
 
   // Agrupar por mes
   const grupos = [];
@@ -304,39 +296,44 @@ export default function PantallaHistorial() {
       {/* Grid: lista | detalle */}
       {!cargando && (
         <div className="historial-grid">
-          {/* Columna izquierda: lista agrupada por mes */}
+          {/* Columna izquierda: lista agrupada por mes o estado vacío */}
           <div className="historial-lista wk-scroll">
-            {lista.length === 0 && (
-              <div style={{ textAlign: "center", padding: "60px 0", color: "var(--faint)", fontFamily: "var(--mono)", fontSize: 13 }}>
-                No hay sesiones en este filtro.
+            {lista.length === 0 ? (
+              <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",flex:1,gap:16,padding:"60px 32px",color:"var(--muted)"}}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{opacity:0.3}}><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg>
+                <div style={{fontFamily:"var(--mono)",fontSize:11,letterSpacing:"0.12em",textTransform:"uppercase",opacity:0.4,textAlign:"center"}}>Aún no tienes sesiones registradas</div>
+                <div style={{fontFamily:"var(--sans)",fontSize:13,opacity:0.3,textAlign:"center"}}>Completa tu primer entrenamiento para ver tu historial aquí</div>
               </div>
-            )}
-            {grupos.map((g) => (
-              <div key={g.clave} style={{ marginBottom: 18 }}>
-                {/* Separador de mes */}
-                <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "4px 2px 12px" }}>
-                  <span style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--muted)" }}>
-                    {MESES_FULL[g.m]} {g.y}
-                  </span>
-                  <span style={{ flex: 1, height: 1, background: "var(--line2)" }} />
-                  <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--faint)" }}>{g.items.length}</span>
+            ) : (
+              grupos.map((g) => (
+                <div key={g.clave} style={{ marginBottom: 18 }}>
+                  {/* Separador de mes */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "4px 2px 12px" }}>
+                    <span style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--muted)" }}>
+                      {MESES_FULL[g.m]} {g.y}
+                    </span>
+                    <span style={{ flex: 1, height: 1, background: "var(--line2)" }} />
+                    <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--faint)" }}>{g.items.length}</span>
+                  </div>
+                  {g.items.map((s) => (
+                    <FilaSesion
+                      key={s.id}
+                      s={s}
+                      selected={s.id === idActual}
+                      onClick={() => setSelId(s.id)}
+                    />
+                  ))}
                 </div>
-                {g.items.map((s) => (
-                  <FilaSesion
-                    key={s.id}
-                    s={s}
-                    selected={s.id === idActual}
-                    onClick={() => setSelId(s.id)}
-                  />
-                ))}
-              </div>
-            ))}
+              ))
+            )}
           </div>
 
-          {/* Columna derecha: detalle */}
-          <div className="historial-detalle wk-scroll">
-            <DetalleSesion s={seleccionada} />
-          </div>
+          {/* Columna derecha: detalle (solo si hay sesión seleccionada) */}
+          {seleccionada && (
+            <div className="historial-detalle wk-scroll">
+              <DetalleSesion s={seleccionada} />
+            </div>
+          )}
         </div>
       )}
     </div>

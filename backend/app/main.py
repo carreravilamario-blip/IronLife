@@ -13,6 +13,42 @@ from app.routers import auth, entrenamiento
 # Crea las tablas si no existen (seguro en producción: IF NOT EXISTS)
 Base.metadata.create_all(bind=engine)
 
+from app.database import SessionLocal
+from app.models import Ejercicio
+
+def _seed_ejercicios_si_vacio():
+    db = SessionLocal()
+    try:
+        if db.query(Ejercicio).count() == 0:
+            ejercicios = [
+                ("Press banca","PECHO"),("Press inclinado mancuernas","PECHO"),("Aperturas mancuernas","PECHO"),
+                ("Fondos","PECHO"),("Press declinado","PECHO"),("Pullover","PECHO"),
+                ("Dominadas","ESPALDA"),("Remo con barra","ESPALDA"),("Jalon al pecho","ESPALDA"),
+                ("Remo en polea","ESPALDA"),("Remo con mancuerna","ESPALDA"),("Peso muerto","ESPALDA"),
+                ("Face pull","ESPALDA"),("Encogimientos","ESPALDA"),
+                ("Press militar","HOMBROS"),("Elevaciones laterales","HOMBROS"),("Elevaciones frontales","HOMBROS"),
+                ("Pajaros","HOMBROS"),("Press Arnold","HOMBROS"),
+                ("Curl con barra","BICEPS"),("Curl martillo","BICEPS"),("Curl concentrado","BICEPS"),
+                ("Curl en polea","BICEPS"),("Curl inclinado","BICEPS"),
+                ("Extension triceps polea","TRICEPS"),("Press frances","TRICEPS"),("Fondos en banco","TRICEPS"),
+                ("Patada de triceps","TRICEPS"),("Extension sobre cabeza","TRICEPS"),
+                ("Sentadilla","CUADRICEPS"),("Prensa","CUADRICEPS"),("Extension de cuadriceps","CUADRICEPS"),
+                ("Zancadas","CUADRICEPS"),("Sentadilla bulgara","CUADRICEPS"),("Hack squat","CUADRICEPS"),
+                ("Peso muerto rumano","ISQUIOS"),("Curl femoral","ISQUIOS"),("Buenos dias","ISQUIOS"),
+                ("Hip thrust","GLUTEOS"),("Patada de gluteo","GLUTEOS"),("Abduccion","GLUTEOS"),
+                ("Elevacion de gemelos de pie","GEMELOS"),("Elevacion de gemelos sentado","GEMELOS"),
+                ("Crunch","ABDOMINALES"),("Plancha","ABDOMINALES"),("Rueda abdominal","ABDOMINALES"),
+                ("Elevacion de piernas","ABDOMINALES"),("Russian twist","ABDOMINALES"),
+                ("Burpees","FUNCIONAL"),("Kettlebell swing","FUNCIONAL"),("TRX remo","FUNCIONAL"),
+            ]
+            for nombre, grupo in ejercicios:
+                db.add(Ejercicio(nombre=nombre, grupo_muscular=grupo, es_personalizado=False))
+            db.commit()
+    finally:
+        db.close()
+
+_seed_ejercicios_si_vacio()
+
 app = FastAPI(
     title="IronLife API",
     version="0.1.0",
