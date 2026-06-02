@@ -60,6 +60,9 @@ export function AuthProvider({ children }) {
 
   function cerrarSesion() {
     localStorage.removeItem("token");
+    localStorage.removeItem("ironlife_calendar_v3");
+    localStorage.removeItem("ironlife_history_v1");
+    localStorage.removeItem("ironlife_timer_v1");
     setToken(null);
     setUsuario(null);
     setRutinas([]);
