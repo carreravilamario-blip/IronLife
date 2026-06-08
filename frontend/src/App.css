@@ -1601,6 +1601,17 @@ input, button, select, textarea {
     width: 100%;
   }
 
+  /* ── Calculadora ── */
+  .calc-header { padding: 18px 18px 16px !important; }
+  .calc-header h1 { font-size: 28px !important; }
+  .calc-body { padding: 16px 14px 32px !important; }
+
+  /* Una sola columna: formulario arriba, resultados debajo */
+  .calc-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+
+  /* Edad/Peso/Altura: 3 col → 3 col compacto (ya caben en móvil) */
+  .calc-fields { grid-template-columns: 1fr 1fr 1fr !important; gap: 8px !important; }
+
   /* ── Pantalla vacia ── */
   .pantalla-vacia { padding: 32px 20px; }
 }

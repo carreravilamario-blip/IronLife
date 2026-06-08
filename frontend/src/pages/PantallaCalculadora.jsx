@@ -220,7 +220,7 @@ export default function PantallaCalculadora() {
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100%", background: H.bg, color: H.text, fontFamily: H.sans }}>
 
       {/* ---- HEADER ---- */}
-      <header style={{ padding: "24px 32px 22px", borderBottom: `1px solid ${H.line}` }}>
+      <header className="calc-header" style={{ padding: "24px 32px 22px", borderBottom: `1px solid ${H.line}` }}>
         <div style={{ fontFamily: H.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: H.accent, marginBottom: 8 }}>
           {t("calculator.subtitle")}
         </div>
@@ -229,8 +229,8 @@ export default function PantallaCalculadora() {
         </h1>
       </header>
 
-      <div style={{ flex: 1, padding: "28px 32px 48px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 24, alignItems: "start" }}>
+      <div className="calc-body" style={{ flex: 1, padding: "28px 32px 48px" }}>
+        <div className="calc-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 24, alignItems: "start" }}>
 
           {/* ======== COLUMNA IZQUIERDA: FORMULARIO ======== */}
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -253,7 +253,7 @@ export default function PantallaCalculadora() {
             {/* Datos físicos */}
             <div style={{ background: H.card, border: `1px solid ${H.line}`, borderRadius: 16, padding: 20 }}>
               <SectionTitle>{t("calculator.physical_data")}</SectionTitle>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
+              <div className="calc-fields" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
                 <NumberField
                   label={t("calculator.age")}
                   unit="años"
