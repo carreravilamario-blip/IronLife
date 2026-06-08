@@ -1494,6 +1494,42 @@ input, button, select, textarea {
   .pantalla-inicio { padding: 24px 20px 40px; }
   .inicio-nombre { font-size: 36px; }
 
+  .inicio-header { padding: 18px 18px 16px !important; }
+  .inicio-header h1 { font-size: 28px !important; }
+  .inicio-body { padding: 16px 14px 32px !important; }
+
+  /* Stats: 2x2 en móvil */
+  .inicio-stats { grid-template-columns: 1fr 1fr !important; gap: 10px !important; margin-bottom: 16px !important; }
+  .inicio-stats > div { padding: 12px 14px !important; }
+  .inicio-stats span[style*="32px"] { font-size: 24px !important; }
+
+  /* Grid inicio: una columna, panel de día primero */
+  .inicio-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+
+  /* Calendario: oculto por defecto en móvil, togglable */
+  .inicio-cal-wrapper { order: 2; } /* va después del panel de día */
+  .inicio-cal-content { display: none; }
+  .inicio-cal-content.visible { display: block; }
+
+  .inicio-cal-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--text2);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.12s, color 0.12s;
+  }
+  .inicio-cal-toggle:hover { background: var(--panel2); color: var(--text); }
+
   /* ── Pantalla entrenar: header ── */
   .entrenar-header { padding: 16px 18px 14px; }
   .entrenar-titulo { font-size: 24px; }
@@ -1568,6 +1604,10 @@ input, button, select, textarea {
   /* ── Pantalla vacia ── */
   .pantalla-vacia { padding: 32px 20px; }
 }
+
+/* ── PantallaInicio: toggle de calendario ── */
+.inicio-cal-toggle { display: none; } /* oculto en escritorio */
+.inicio-cal-content { display: block; } /* siempre visible en escritorio */
 
 /* ── Ajustes extra para pantallas muy pequeñas (≤ 400px) ── */
 @media (max-width: 400px) {
