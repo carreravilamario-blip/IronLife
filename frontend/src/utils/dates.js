@@ -25,7 +25,8 @@ export function mondayIndex(jsDay) {
   return (jsDay + 6) % 7;
 }
 
+import { WEEKDAYS_FULL } from "../constants/dates";
+
 export function diaSemana(s) {
-  const { WEEKDAYS_FULL } = require("../constants/dates");
   return WEEKDAYS_FULL[(new Date(s.y, s.m, s.d).getDay() + 6) % 7];
 }
