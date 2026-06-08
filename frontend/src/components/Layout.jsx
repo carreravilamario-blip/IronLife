@@ -273,6 +273,7 @@ export default function Layout({ onCerrarSesion, children }) {
   const { usuario, rutinas } = useAuth();
   const { rutinaId } = useParams();
   const [modalAbierto, setModalAbierto] = useState(false);
+  const [menuMovilAbierto, setMenuMovilAbierto] = useState(false);
   const inicial = usuario?.nombre?.[0]?.toUpperCase() ?? "U";
   const { modo, toggleTema } = useTheme();
   const idiomaActual = i18n.language?.startsWith("en") ? "en" : "es";
@@ -280,7 +281,46 @@ export default function Layout({ onCerrarSesion, children }) {
 
   return (
     <div className="layout">
-      {/* ── Barra lateral ── */}
+
+      {/* ── Top bar móvil (solo visible en móvil) ── */}
+      <header className="mobile-topbar">
+        <div className="mobile-topbar-logo">
+          <DumbbellMark />
+          <span className="sidebar-logo-text">IRON<span>LIFE</span></span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <button
+            className="mobile-topbar-btn"
+            onClick={() => setModalAbierto(true)}
+            aria-label={t("nav.new_routine")}
+          >
+            <IcPlus />
+          </button>
+          <button
+            className="mobile-topbar-btn"
+            onClick={() => setMenuMovilAbierto(o => !o)}
+            aria-label="Menú"
+          >
+            <div className="usuario-avatar" style={{ width: 28, height: 28, fontSize: 12 }}>{inicial}</div>
+          </button>
+        </div>
+        {/* Desplegable de usuario en móvil */}
+        {menuMovilAbierto && (
+          <div className="mobile-user-menu" onClick={() => setMenuMovilAbierto(false)}>
+            <button className="mobile-user-menu-item" onClick={toggleTema}>
+              {modo === "dark" ? t("nav.light_mode") : t("nav.dark_mode")}
+            </button>
+            <button className="mobile-user-menu-item" onClick={toggleIdioma}>
+              {idiomaActual === "es" ? "EN" : "ES"}
+            </button>
+            <button className="mobile-user-menu-item danger" onClick={onCerrarSesion}>
+              {t("nav.logout")}
+            </button>
+          </div>
+        )}
+      </header>
+
+      {/* ── Barra lateral (solo escritorio) ── */}
       <aside className="sidebar wk-scroll">
         {/* Logo */}
         <div className="sidebar-logo">
@@ -386,6 +426,30 @@ export default function Layout({ onCerrarSesion, children }) {
 
       {/* ── Contenido principal ── */}
       <main className="contenido-principal">{children}</main>
+
+      {/* ── Bottom nav (solo móvil) ── */}
+      <nav className="mobile-nav">
+        <NavLink to="/" end className={({ isActive }) => "mobile-nav-item" + (isActive ? " activo" : "")}>
+          <IcHome />
+          <span>{t("nav.home")}</span>
+        </NavLink>
+        <NavLink to="/entrenar" className={({ isActive }) => "mobile-nav-item" + (isActive ? " activo" : "")}>
+          <IcDumb />
+          <span>{t("nav.train")}</span>
+        </NavLink>
+        <NavLink to="/progreso" className={({ isActive }) => "mobile-nav-item" + (isActive ? " activo" : "")}>
+          <IcChart />
+          <span>{t("nav.progress")}</span>
+        </NavLink>
+        <NavLink to="/historial" className={({ isActive }) => "mobile-nav-item" + (isActive ? " activo" : "")}>
+          <IcHist />
+          <span>{t("nav.history")}</span>
+        </NavLink>
+        <NavLink to="/calculadora" className={({ isActive }) => "mobile-nav-item" + (isActive ? " activo" : "")}>
+          <IcCalc />
+          <span>{t("nav.calculator")}</span>
+        </NavLink>
+      </nav>
 
       {/* ── Modal nueva rutina ── */}
       {modalAbierto && <ModalNuevaRutina onCerrar={() => setModalAbierto(false)} />}
