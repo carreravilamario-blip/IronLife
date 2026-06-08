@@ -63,6 +63,38 @@ function AchIcon({ name, color, size = 22 }) {
 // Paleta de colores para ejercicios de la API (el primero usa ACCENT_HEX).
 const API_COLORS = [ACCENT_HEX, "#a855f7", "#3b82f6", "#3ecf8e", "#38bdf8", "#facc15", "#ff5722", "#f97316"];
 
+const FILTROS = [
+  { label: "progress.filter_12w", semanas: 12 },
+  { label: "progress.filter_6m", semanas: 24 },
+  { label: "progress.filter_all", semanas: 104 },
+];
+
+function FilterButtons({ semanas, setSemanas, t }) {
+  return (
+    <div style={{ display: "flex", gap: 8 }}>
+      {FILTROS.map((f) => {
+        const active = semanas === f.semanas;
+        return (
+          <span
+            key={f.semanas}
+            onClick={() => setSemanas(f.semanas)}
+            style={{
+              fontFamily: G.mono, fontSize: 11.5, letterSpacing: "0.04em",
+              padding: "8px 14px", borderRadius: 9, cursor: "pointer",
+              background: active ? G.accent : G.card,
+              color: active ? "#0d0d0f" : G.muted,
+              border: `1px solid ${active ? G.accent : G.line}`,
+              fontWeight: active ? 700 : 500,
+            }}
+          >
+            {t(f.label)}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
 function epley1RM(kg, reps) {
   if (!kg || !reps || reps === 1) return kg ?? 0;
   return Math.round(kg * (1 + reps / 30));
@@ -75,6 +107,7 @@ export default function PantallaProgreso() {
   const [stats, setStats] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [liftId, setLiftId] = useState(null);
+  const [semanas, setSemanas] = useState(12);
 
   useEffect(() => {
     if (!token) {
@@ -85,7 +118,7 @@ export default function PantallaProgreso() {
     async function cargar() {
       setCargando(true);
       try {
-        const data = await obtenerEstadisticas(12, token);
+        const data = await obtenerEstadisticas(semanas, token);
         if (!cancelado) setStats(data);
       } catch {
         if (!cancelado) setStats(null);
@@ -95,7 +128,7 @@ export default function PantallaProgreso() {
     }
     cargar();
     return () => { cancelado = true; };
-  }, [token]);
+  }, [token, semanas]);
 
   // Estado de carga
   if (cargando) {
@@ -119,12 +152,7 @@ export default function PantallaProgreso() {
             </div>
             <h1 style={{ margin: 0, fontFamily: G.anton, fontSize: 40, textTransform: "uppercase", letterSpacing: "0.005em", fontWeight: 700 }}>{t("progress.your_progress")}</h1>
           </div>
-          <div style={{ display: "flex", gap: 8 }}>
-            {[t("progress.filter_12w"), t("progress.filter_6m"), t("progress.filter_all")].map((label, i) => (
-              <span key={label} style={{ fontFamily: G.mono, fontSize: 11.5, letterSpacing: "0.04em", padding: "8px 14px", borderRadius: 9, cursor: "pointer",
-                background: i === 0 ? G.accent : G.card, color: i === 0 ? "#0d0d0f" : G.muted, border: `1px solid ${i === 0 ? G.accent : G.line}`, fontWeight: i === 0 ? 700 : 500 }}>{label}</span>
-            ))}
-          </div>
+          <FilterButtons semanas={semanas} setSemanas={setSemanas} t={t} />
         </header>
         <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",flex:1,gap:16,padding:"60px 32px"}}>
           <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{opacity:0.2}}><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
@@ -212,19 +240,14 @@ export default function PantallaProgreso() {
           </div>
           <h1 style={{ margin: 0, fontFamily: G.anton, fontSize: 40, textTransform: "uppercase", letterSpacing: "0.005em", fontWeight: 700 }}>{t("progress.your_progress")}</h1>
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          {[t("progress.filter_12w"), t("progress.filter_6m"), t("progress.filter_all")].map((label, i) => (
-            <span key={label} style={{ fontFamily: G.mono, fontSize: 11.5, letterSpacing: "0.04em", padding: "8px 14px", borderRadius: 9, cursor: "pointer",
-              background: i === 0 ? G.accent : G.card, color: i === 0 ? "#0d0d0f" : G.muted, border: `1px solid ${i === 0 ? G.accent : G.line}`, fontWeight: i === 0 ? 700 : 500 }}>{label}</span>
-          ))}
-        </div>
+          <FilterButtons semanas={semanas} setSemanas={setSemanas} t={t} />
       </header>
 
       <div style={{ flex: 1, padding: "24px 32px 40px" }}>
         {/* fila de KPIs */}
         <div style={{ display: "flex", gap: 13, flexWrap: "wrap", marginBottom: 22 }}>
           <Kpi label={t("progress.total_volume")} value={kpiVolumen} unit="kg" sub="▲ peso movido" accent />
-          <Kpi label={t("progress.sessions")} value={kpiSesiones} sub="12 semanas" />
+          <Kpi label={t("progress.sessions")} value={kpiSesiones} sub={`${semanas} semanas`} />
           <Kpi label={t("progress.streak")} value={kpiRacha} unit="días" />
           <Kpi label={t("progress.hours")} value={kpiHoras} unit="h" />
         </div>

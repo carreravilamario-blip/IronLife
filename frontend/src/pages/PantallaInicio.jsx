@@ -17,7 +17,7 @@ import { MONTHS_ES as HMES, WEEKDAYS_FULL as WDF } from "../constants/dates";
 import { keyFromDate as kfd, parseKey as pk, addDays as addD, mondayIndex as hmIdx, dateKey } from "../utils/dates";
 
 const STORE = "ironlife_calendar_v3";
-const TODAY = new Date(2026, 5, 1); // 1 de junio de 2026 (fecha de referencia del demo)
+const TODAY = new Date();
 const TODAY_KEY = kfd(TODAY);
 
 // Día registrado más reciente, para abrir en un mes con datos.

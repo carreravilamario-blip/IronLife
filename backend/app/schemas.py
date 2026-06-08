@@ -200,7 +200,7 @@ class RecordEjercicio(BaseModel):
 
 class EstadisticasResumen(BaseModel):
     volumen_total_kg: int
-    sesiones_total: int
+    sesiones_totales: int
     racha_actual: int
     horas_total: int
 

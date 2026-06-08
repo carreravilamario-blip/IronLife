@@ -610,7 +610,7 @@ def obtener_estadisticas(
     return Estadisticas(
         resumen=EstadisticasResumen(
             volumen_total_kg=volumen_total,
-            sesiones_total=len(sesiones),
+            sesiones_totales=len(sesiones),
             racha_actual=racha,
             horas_total=int(horas),
         ),
