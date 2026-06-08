@@ -8,6 +8,7 @@
 // ============================================================
 
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { WK as G, ACCENT_HEX } from "../ui/theme";
 import { LineChart, VolumeBars, HBars, pHexA as pa } from "../components/Charts";
 import { useAuth } from "../context";
@@ -68,6 +69,7 @@ function epley1RM(kg, reps) {
 }
 
 export default function PantallaProgreso() {
+  const { t } = useTranslation();
   const { token } = useAuth();
 
   const [stats, setStats] = useState(null);
@@ -99,7 +101,7 @@ export default function PantallaProgreso() {
   if (cargando) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100%", background: G.bg }}>
-        <div style={{ fontFamily: G.mono, fontSize: 13, color: G.muted, letterSpacing: "0.1em" }}>Cargando estadísticas…</div>
+        <div style={{ fontFamily: G.mono, fontSize: 13, color: G.muted, letterSpacing: "0.1em" }}>{t("app.loading")}</div>
       </div>
     );
   }
@@ -113,21 +115,21 @@ export default function PantallaProgreso() {
         <header style={{ padding: "24px 32px 22px", borderBottom: `1px solid ${G.line}`, display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 16 }}>
           <div>
             <div style={{ fontFamily: G.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: G.accent, marginBottom: 8 }}>
-              Análisis
+              {t("progress.analysis")}
             </div>
-            <h1 style={{ margin: 0, fontFamily: G.anton, fontSize: 40, textTransform: "uppercase", letterSpacing: "0.005em", fontWeight: 700 }}>Tu progreso</h1>
+            <h1 style={{ margin: 0, fontFamily: G.anton, fontSize: 40, textTransform: "uppercase", letterSpacing: "0.005em", fontWeight: 700 }}>{t("progress.your_progress")}</h1>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
-            {["12 sem", "6 meses", "Todo"].map((t, i) => (
-              <span key={t} style={{ fontFamily: G.mono, fontSize: 11.5, letterSpacing: "0.04em", padding: "8px 14px", borderRadius: 9, cursor: "pointer",
-                background: i === 0 ? G.accent : G.card, color: i === 0 ? "#0d0d0f" : G.muted, border: `1px solid ${i === 0 ? G.accent : G.line}`, fontWeight: i === 0 ? 700 : 500 }}>{t}</span>
+            {[t("progress.filter_12w"), t("progress.filter_6m"), t("progress.filter_all")].map((label, i) => (
+              <span key={label} style={{ fontFamily: G.mono, fontSize: 11.5, letterSpacing: "0.04em", padding: "8px 14px", borderRadius: 9, cursor: "pointer",
+                background: i === 0 ? G.accent : G.card, color: i === 0 ? "#0d0d0f" : G.muted, border: `1px solid ${i === 0 ? G.accent : G.line}`, fontWeight: i === 0 ? 700 : 500 }}>{label}</span>
             ))}
           </div>
         </header>
         <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",flex:1,gap:16,padding:"60px 32px"}}>
           <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{opacity:0.2}}><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
-          <div style={{fontFamily:"var(--mono)",fontSize:11,letterSpacing:"0.12em",textTransform:"uppercase",color:"var(--muted)",textAlign:"center"}}>Sin datos todavía</div>
-          <div style={{fontFamily:"var(--sans)",fontSize:13,color:"var(--faint)",textAlign:"center",maxWidth:280}}>Completa algunos entrenamientos y aquí verás tu progreso, récords y estadísticas</div>
+          <div style={{fontFamily:"var(--mono)",fontSize:11,letterSpacing:"0.12em",textTransform:"uppercase",color:"var(--muted)",textAlign:"center"}}>{t("progress.no_data_title")}</div>
+          <div style={{fontFamily:"var(--sans)",fontSize:13,color:"var(--faint)",textAlign:"center",maxWidth:280}}>{t("progress.no_data_desc")}</div>
         </div>
       </div>
     );
@@ -206,14 +208,14 @@ export default function PantallaProgreso() {
       <header style={{ padding: "24px 32px 22px", borderBottom: `1px solid ${G.line}`, display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 16 }}>
         <div>
           <div style={{ fontFamily: G.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: G.accent, marginBottom: 8 }}>
-            Análisis · Datos reales
+            {t("progress.analysis")} · {t("progress.real_data")}
           </div>
-          <h1 style={{ margin: 0, fontFamily: G.anton, fontSize: 40, textTransform: "uppercase", letterSpacing: "0.005em", fontWeight: 700 }}>Tu progreso</h1>
+          <h1 style={{ margin: 0, fontFamily: G.anton, fontSize: 40, textTransform: "uppercase", letterSpacing: "0.005em", fontWeight: 700 }}>{t("progress.your_progress")}</h1>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
-          {["12 sem", "6 meses", "Todo"].map((t, i) => (
-            <span key={t} style={{ fontFamily: G.mono, fontSize: 11.5, letterSpacing: "0.04em", padding: "8px 14px", borderRadius: 9, cursor: "pointer",
-              background: i === 0 ? G.accent : G.card, color: i === 0 ? "#0d0d0f" : G.muted, border: `1px solid ${i === 0 ? G.accent : G.line}`, fontWeight: i === 0 ? 700 : 500 }}>{t}</span>
+          {[t("progress.filter_12w"), t("progress.filter_6m"), t("progress.filter_all")].map((label, i) => (
+            <span key={label} style={{ fontFamily: G.mono, fontSize: 11.5, letterSpacing: "0.04em", padding: "8px 14px", borderRadius: 9, cursor: "pointer",
+              background: i === 0 ? G.accent : G.card, color: i === 0 ? "#0d0d0f" : G.muted, border: `1px solid ${i === 0 ? G.accent : G.line}`, fontWeight: i === 0 ? 700 : 500 }}>{label}</span>
           ))}
         </div>
       </header>
@@ -221,10 +223,10 @@ export default function PantallaProgreso() {
       <div style={{ flex: 1, padding: "24px 32px 40px" }}>
         {/* fila de KPIs */}
         <div style={{ display: "flex", gap: 13, flexWrap: "wrap", marginBottom: 22 }}>
-          <Kpi label="Volumen total" value={kpiVolumen} unit="kg" sub="▲ peso movido" accent />
-          <Kpi label="Sesiones" value={kpiSesiones} sub="12 semanas" />
-          <Kpi label="Racha actual" value={kpiRacha} unit="días" />
-          <Kpi label="Horas" value={kpiHoras} unit="h" />
+          <Kpi label={t("progress.total_volume")} value={kpiVolumen} unit="kg" sub="▲ peso movido" accent />
+          <Kpi label={t("progress.sessions")} value={kpiSesiones} sub="12 semanas" />
+          <Kpi label={t("progress.streak")} value={kpiRacha} unit="días" />
+          <Kpi label={t("progress.hours")} value={kpiHoras} unit="h" />
         </div>
 
         {/* cuadrícula de dos columnas */}
@@ -233,8 +235,8 @@ export default function PantallaProgreso() {
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             {/* progresión de fuerza */}
             {LIFTS.length > 0 && lift && (
-              <Card title="Progresión de fuerza" pad={20}
-                action={<span style={{ fontFamily: G.mono, fontSize: 11, color: G.muted }}>Serie top · {lift.reps} reps</span>}>
+              <Card title={t("progress.strength_progress")} pad={20}
+                action={<span style={{ fontFamily: G.mono, fontSize: 11, color: G.muted }}>{t("progress.top_set")} · {lift.reps} reps</span>}>
                 {/* chips de ejercicio */}
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 18 }}>
                   {LIFTS.map((l) => {
@@ -253,19 +255,19 @@ export default function PantallaProgreso() {
                 {/* resumen empezaste → ahora */}
                 <div style={{ display: "flex", alignItems: "stretch", gap: 12, marginBottom: 8, flexWrap: "wrap" }}>
                   <div style={{ flex: 1, minWidth: 110, background: G.panel2, border: `1px solid ${G.line2}`, borderRadius: 11, padding: "12px 14px" }}>
-                    <div style={{ fontFamily: G.mono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: G.faint, marginBottom: 6 }}>Empezaste</div>
+                    <div style={{ fontFamily: G.mono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: G.faint, marginBottom: 6 }}>{t("progress.started")}</div>
                     <div style={{ fontFamily: G.mono, fontSize: 22, fontWeight: 700, color: G.text2 }}>{start} <span style={{ fontSize: 13, color: G.faint }}>kg</span></div>
                   </div>
                   <div style={{ flex: 1, minWidth: 110, background: pa(lift.color, 0.12), border: `1px solid ${pa(lift.color, 0.35)}`, borderRadius: 11, padding: "12px 14px" }}>
-                    <div style={{ fontFamily: G.mono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: G.faint, marginBottom: 6 }}>Ahora</div>
+                    <div style={{ fontFamily: G.mono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: G.faint, marginBottom: 6 }}>{t("progress.now")}</div>
                     <div style={{ fontFamily: G.mono, fontSize: 22, fontWeight: 700, color: lift.color }}>{now} <span style={{ fontSize: 13, opacity: 0.7 }}>kg</span></div>
                   </div>
                   <div style={{ flex: 1, minWidth: 110, background: G.panel2, border: `1px solid ${G.line2}`, borderRadius: 11, padding: "12px 14px" }}>
-                    <div style={{ fontFamily: G.mono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: G.faint, marginBottom: 6 }}>Mejora</div>
+                    <div style={{ fontFamily: G.mono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: G.faint, marginBottom: 6 }}>{t("progress.improvement")}</div>
                     <div style={{ fontFamily: G.mono, fontSize: 22, fontWeight: 700, color: G.green }}>+{deltaKg}<span style={{ fontSize: 13 }}>kg</span> {pct != null && <span style={{ fontSize: 13 }}>· +{pct}%</span>}</div>
                   </div>
                   <div style={{ flex: 1, minWidth: 110, background: G.panel2, border: `1px solid ${G.line2}`, borderRadius: 11, padding: "12px 14px" }}>
-                    <div style={{ fontFamily: G.mono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: G.faint, marginBottom: 6 }}>1RM est.</div>
+                    <div style={{ fontFamily: G.mono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: G.faint, marginBottom: 6 }}>{t("progress.est_1rm")}</div>
                     <div style={{ fontFamily: G.mono, fontSize: 22, fontWeight: 700, color: G.text }}>{e1Now}<span style={{ fontSize: 13, color: G.faint }}>kg</span> <span style={{ fontSize: 12, color: G.green }}>↑{e1Now - e1Start}</span></div>
                   </div>
                 </div>
@@ -276,7 +278,7 @@ export default function PantallaProgreso() {
 
             {/* volumen semanal */}
             {weeklyVolume.length > 0 && (
-              <Card title="Volumen semanal" action={<span style={{ fontFamily: G.mono, fontSize: 11, color: G.muted }}>kg movidos / semana</span>}>
+              <Card title={t("progress.weekly_volume")} action={<span style={{ fontFamily: G.mono, fontSize: 11, color: G.muted }}>{t("progress.weekly_kg")}</span>}>
                 <VolumeBars data={weeklyVolume} labels={weekLabels} color={ACCENT_HEX} height={210} />
               </Card>
             )}
@@ -286,7 +288,7 @@ export default function PantallaProgreso() {
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             {/* récords */}
             {records.length > 0 && (
-              <Card title="Récords personales" action={<span style={{ fontFamily: G.mono, fontSize: 11, color: G.accent }}>1RM est.</span>}>
+              <Card title={t("progress.records")} action={<span style={{ fontFamily: G.mono, fontSize: 11, color: G.accent }}>{t("progress.est_1rm")}</span>}>
                 <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   {records.map((l, i) => {
                     const w = l.history[l.history.length - 1];
@@ -308,7 +310,7 @@ export default function PantallaProgreso() {
 
             {/* reparto muscular */}
             {muscleSplit.length > 0 && (
-              <Card title="Reparto muscular" action={<span style={{ fontFamily: G.mono, fontSize: 11, color: G.muted }}>4 sem</span>}>
+              <Card title={t("progress.muscle_dist")} action={<span style={{ fontFamily: G.mono, fontSize: 11, color: G.muted }}>{t("progress.four_weeks")}</span>}>
                 <HBars items={muscleSplit} />
               </Card>
             )}
@@ -318,7 +320,7 @@ export default function PantallaProgreso() {
         {/* logros */}
         {ACH.length > 0 && (
           <div style={{ marginTop: 22 }}>
-            <Card title="Logros" action={<span style={{ fontFamily: G.mono, fontSize: 11, color: G.muted }}>{ACH.filter((a) => a.done).length}/{ACH.length} desbloqueados</span>}>
+            <Card title={t("progress.achievements")} action={<span style={{ fontFamily: G.mono, fontSize: 11, color: G.muted }}>{ACH.filter((a) => a.done).length}/{ACH.length} {t("progress.unlocked", { count: ACH.filter((a) => a.done).length })}</span>}>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
                 {ACH.map((a, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", gap: 13, padding: "13px 14px", borderRadius: 12,

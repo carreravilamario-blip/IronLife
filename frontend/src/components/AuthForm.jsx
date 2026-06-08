@@ -4,9 +4,11 @@
 // ============================================================
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { registrar, login } from "../api";
 
 export default function AuthForm({ onAutenticado }) {
+  const { t } = useTranslation();
   const [modo, setModo] = useState("login"); // "login" o "registro"
   const [email, setEmail] = useState("");
   const [nombre, setNombre] = useState("");
@@ -42,20 +44,20 @@ export default function AuthForm({ onAutenticado }) {
     <div className="auth">
       {/* ---------- BARRA SUPERIOR ---------- */}
       <header className="auth-top">
-        <span className="top-izq">EST. 2026</span>
-        <span className="top-centro">● MIEMBROS — ACCESO 24/7</span>
+        <span className="top-izq">{t("auth.est")}</span>
+        <span className="top-centro">{t("auth.members_bar")}</span>
         <nav className="top-tabs">
           <button
             className={!esRegistro ? "tab activa" : "tab"}
             onClick={() => cambiarModo("login")}
           >
-            LOGIN
+            {t("auth.tab_login")}
           </button>
           <button
             className={esRegistro ? "tab activa" : "tab"}
             onClick={() => cambiarModo("registro")}
           >
-            REGISTRO
+            {t("auth.tab_register")}
           </button>
         </nav>
       </header>
@@ -67,20 +69,20 @@ export default function AuthForm({ onAutenticado }) {
             <h1 className="marca-logo">
               IRON<span>LIFE</span>
             </h1>
-            <p className="marca-tags">FUERZA &nbsp;/&nbsp; HIPERTROFIA &nbsp;/&nbsp; CROSS</p>
+            <p className="marca-tags">{t("auth.tagline")}</p>
           </div>
         </aside>
 
         {/* ---------- FORMULARIO (derecha) ---------- */}
         <main className="auth-form-panel">
           <p className="form-eyebrow">
-            // {esRegistro ? "NUEVO MIEMBRO" : "ACCESO DE MIEMBRO"}
+            // {esRegistro ? t("auth.eyebrow_new") : t("auth.eyebrow_access")}
           </p>
           <h2 className="form-titulo">
             {esRegistro ? (
-              <>CREA<br />TU CUENTA</>
+              <>{t("auth.title_create").split("\n")[0]}<br />{t("auth.title_create").split("\n")[1] || ""}</>
             ) : (
-              <>INICIA<br />SESIÓN</>
+              <>{t("auth.title_signin").split("\n")[0]}<br />{t("auth.title_signin").split("\n")[1] || ""}</>
             )}
           </h2>
 
@@ -88,13 +90,13 @@ export default function AuthForm({ onAutenticado }) {
             {esRegistro && (
               <div className="campo">
                 <label>
-                  <span className="num">01</span> NOMBRE
+                  <span className="num">01</span> {t("auth.field_name")}
                 </label>
                 <input
                   type="text"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
-                  placeholder="Tu nombre"
+                  placeholder={t("auth.placeholder_name")}
                   required
                 />
               </div>
@@ -102,20 +104,20 @@ export default function AuthForm({ onAutenticado }) {
 
             <div className="campo">
               <label>
-                <span className="num">{esRegistro ? "02" : "01"}</span> EMAIL
+                <span className="num">{esRegistro ? "02" : "01"}</span> {t("auth.field_email")}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu@email.com"
+                placeholder={t("auth.placeholder_email")}
                 required
               />
             </div>
 
             <div className="campo">
               <label>
-                <span className="num">{esRegistro ? "03" : "02"}</span> CONTRASEÑA
+                <span className="num">{esRegistro ? "03" : "02"}</span> {t("auth.field_password")}
               </label>
               <input
                 type="password"
@@ -130,10 +132,10 @@ export default function AuthForm({ onAutenticado }) {
             {!esRegistro && (
               <div className="form-opciones">
                 <label className="recordarme">
-                  <input type="checkbox" defaultChecked /> RECORDARME
+                  <input type="checkbox" defaultChecked /> {t("auth.remember_me")}
                 </label>
                 <button type="button" className="enlace-mini">
-                  ¿OLVIDASTE?
+                  {t("auth.forgot")}
                 </button>
               </div>
             )}
@@ -142,15 +144,15 @@ export default function AuthForm({ onAutenticado }) {
 
             <button type="submit" className="boton-principal" disabled={cargando}>
               {cargando
-                ? "CARGANDO..."
+                ? t("auth.btn_loading")
                 : esRegistro
-                ? "CREAR CUENTA →"
-                : "INICIAR SESIÓN →"}
+                ? t("auth.btn_create")
+                : t("auth.btn_signin")}
             </button>
           </form>
 
           <div className="divisor">
-            <span>O CONTINÚA CON</span>
+            <span>{t("auth.continue_with")}</span>
           </div>
 
           <div className="social">
@@ -172,13 +174,13 @@ export default function AuthForm({ onAutenticado }) {
           </div>
 
           <p className="form-pie">
-            {esRegistro ? "¿YA TIENES CUENTA? " : "¿SIN CUENTA? "}
+            {esRegistro ? t("auth.already_account") : t("auth.no_account")}
             <button
               type="button"
               className="enlace"
               onClick={() => cambiarModo(esRegistro ? "login" : "registro")}
             >
-              {esRegistro ? "ENTRA →" : "ÚNETE →"}
+              {esRegistro ? t("auth.enter") : t("auth.join")}
             </button>
           </p>
         </main>

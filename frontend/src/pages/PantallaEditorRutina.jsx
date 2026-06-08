@@ -11,6 +11,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context";
 import { listarEjercicios, actualizarRutina } from "../api";
 import { colorDeGrupo, hexAlfa } from "../ui/grupoColores";
@@ -111,6 +112,7 @@ function BadgeGrupo({ grupo }) {
 
 // ── Componente principal ──────────────────────────────────────
 export default function PantallaEditorRutina() {
+  const { t } = useTranslation();
   const { rutinaId } = useParams();
   const navigate = useNavigate();
   const { token, rutinas } = useAuth();
@@ -292,7 +294,7 @@ export default function PantallaEditorRutina() {
               color: "var(--accent)",
               marginBottom: 3,
             }}>
-              Editor de rutina
+              {t("editor.title")}
             </div>
             <h1 style={{
               margin: 0,
@@ -302,7 +304,7 @@ export default function PantallaEditorRutina() {
               letterSpacing: "0.02em",
               lineHeight: 1,
             }}>
-              {rutina?.nombre ?? "Cargando..."}
+              {rutina?.nombre ?? t("app.loading")}
             </h1>
           </div>
         </div>
@@ -336,11 +338,11 @@ export default function PantallaEditorRutina() {
           }}
         >
           {savedOk ? (
-            <><IcCheck /> Guardado</>
+            <><IcCheck /> {t("editor.saved")}</>
           ) : saving ? (
-            "Guardando..."
+            t("common.saving")
           ) : (
-            "Guardar rutina"
+            t("editor.save_routine")
           )}
         </button>
       </header>
@@ -393,7 +395,7 @@ export default function PantallaEditorRutina() {
               textTransform: "uppercase",
               color: "var(--muted)",
             }}>
-              En la rutina
+              {t("editor.in_routine")}
             </span>
             <span style={{
               fontFamily: H.mono,
@@ -420,9 +422,7 @@ export default function PantallaEditorRutina() {
                 fontSize: 12,
                 lineHeight: 1.6,
               }}>
-                Sin ejercicios.
-                <br />
-                Añade desde el catálogo.
+                {t("editor.no_exercises")}
               </div>
             )}
 
@@ -495,7 +495,7 @@ export default function PantallaEditorRutina() {
                   <button
                     onClick={() => moverArriba(index)}
                     disabled={index === 0}
-                    title="Subir"
+                    title={t("editor.move_up")}
                     style={{
                       width: 28,
                       height: 28,
@@ -515,7 +515,7 @@ export default function PantallaEditorRutina() {
                   <button
                     onClick={() => moverAbajo(index)}
                     disabled={index === ejerciciosSeleccionados.length - 1}
-                    title="Bajar"
+                    title={t("editor.move_down")}
                     style={{
                       width: 28,
                       height: 28,
@@ -534,7 +534,7 @@ export default function PantallaEditorRutina() {
                   </button>
                   <button
                     onClick={() => quitar(ej.id)}
-                    title="Quitar ejercicio"
+                    title={t("editor.remove_exercise")}
                     style={{
                       width: 28,
                       height: 28,
@@ -587,7 +587,7 @@ export default function PantallaEditorRutina() {
                 type="text"
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
-                placeholder="Buscar por nombre, grupo, equipo…"
+                placeholder={t("editor.search_placeholder")}
                 style={{
                   flex: 1,
                   border: "none",
@@ -665,7 +665,7 @@ export default function PantallaEditorRutina() {
                 fontFamily: H.mono,
                 fontSize: 12,
               }}>
-                Cargando ejercicios...
+                {t("modal_exercise.loading")}
               </div>
             )}
 
@@ -677,7 +677,7 @@ export default function PantallaEditorRutina() {
                 fontFamily: H.mono,
                 fontSize: 12,
               }}>
-                Sin resultados{busqueda ? ` para "${busqueda}"` : ""}.
+                {t("modal_exercise.no_results")}{busqueda ? ` para "${busqueda}"` : ""}.
               </div>
             )}
 
@@ -768,9 +768,9 @@ export default function PantallaEditorRutina() {
                       : hexAlfa(accentColor, 0.3)}`,
                   }}>
                     {yaAnadido ? (
-                      <><IcCheck /> Añadido</>
+                      <><IcCheck /> {t("modal_exercise.added")}</>
                     ) : (
-                      <><IcPlus /> Añadir</>
+                      <><IcPlus /> {t("modal_exercise.add")}</>
                     )}
                   </span>
                 </button>

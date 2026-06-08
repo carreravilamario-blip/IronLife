@@ -5,6 +5,7 @@
 // ============================================================
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { listarEjercicios, crearEjercicioPersonalizado, sincronizarEjerciciosWger } from "../api";
 import { useAuth } from "../context";
 import { colorDeGrupo, hexAlfa } from "../ui/grupoColores";
@@ -47,6 +48,7 @@ function norm(s) {
 
 // ── Formulario de ejercicio personalizado ─────────────────────
 function FormEjercicioPersonalizado({ onCreado, onVolver }) {
+  const { t } = useTranslation();
   const { token } = useAuth();
   const [nombre, setNombre]   = useState("");
   const [grupo, setGrupo]     = useState("");
@@ -61,9 +63,9 @@ function FormEjercicioPersonalizado({ onCreado, onVolver }) {
 
   async function manejarGuardar(e) {
     e.preventDefault();
-    if (!nombre.trim()) { setError("El nombre no puede estar vacío."); return; }
-    if (!grupo)          { setError("Elige un grupo muscular."); return; }
-    if (!equipo)         { setError("Elige el tipo de equipo."); return; }
+    if (!nombre.trim()) { setError(t("modal_exercise.error_name")); return; }
+    if (!grupo)          { setError(t("modal_exercise.error_group")); return; }
+    if (!equipo)         { setError(t("modal_exercise.error_equipment")); return; }
 
     setGuardando(true);
     setError("");
@@ -85,10 +87,10 @@ function FormEjercicioPersonalizado({ onCreado, onVolver }) {
       <div className="modal-cabecera">
         <div className="modal-titulo-row">
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <button className="wk-icon-btn" onClick={onVolver} title="Volver">
+            <button className="wk-icon-btn" onClick={onVolver} title={t("modal_exercise.back")}>
               <IcBack />
             </button>
-            <h3 className="modal-titulo">Ejercicio personalizado</h3>
+            <h3 className="modal-titulo">{t("modal_exercise.custom_title")}</h3>
           </div>
         </div>
       </div>
@@ -96,20 +98,20 @@ function FormEjercicioPersonalizado({ onCreado, onVolver }) {
       <form onSubmit={manejarGuardar} className="modal-custom-inner">
         {/* Nombre */}
         <label className="modal-custom-label">
-          Nombre del ejercicio
+          {t("modal_exercise.exercise_name_label")}
           <input
             ref={inputRef}
             className="modal-nr-input"
             type="text"
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
-            placeholder="Ej: Press con bandas"
+            placeholder={t("modal_exercise.exercise_name_placeholder")}
             maxLength={120}
           />
         </label>
 
         {/* Grupo muscular */}
-        <label className="modal-custom-label">Grupo muscular</label>
+        <label className="modal-custom-label">{t("modal_exercise.muscle_group")}</label>
         <div className="modal-custom-chips">
           {GRUPOS.map((g) => (
             <button
@@ -124,7 +126,7 @@ function FormEjercicioPersonalizado({ onCreado, onVolver }) {
         </div>
 
         {/* Equipo */}
-        <label className="modal-custom-label" style={{ marginTop: 16 }}>Equipo / material</label>
+        <label className="modal-custom-label" style={{ marginTop: 16 }}>{t("modal_exercise.equipment")}</label>
         <div className="modal-custom-chips">
           {EQUIPOS.map((eq) => (
             <button
@@ -146,7 +148,7 @@ function FormEjercicioPersonalizado({ onCreado, onVolver }) {
           style={{ marginTop: 20, width: "100%" }}
           disabled={guardando}
         >
-          {guardando ? "Creando…" : "Crear y añadir al entrenamiento"}
+          {guardando ? t("modal_exercise.creating") : t("modal_exercise.create_add")}
         </button>
       </form>
     </div>
@@ -155,6 +157,7 @@ function FormEjercicioPersonalizado({ onCreado, onVolver }) {
 
 // ── Componente principal ──────────────────────────────────────
 export default function ModalEjercicio({ open, ejerciciosActivos = [], onAnadir, onCerrar }) {
+  const { t } = useTranslation();
   const { token } = useAuth();
   const [ejercicios, setEjercicios] = useState([]);
   const [cargando, setCargando]     = useState(false);
@@ -224,8 +227,8 @@ export default function ModalEjercicio({ open, ejerciciosActivos = [], onAnadir,
         {/* Cabecera */}
         <div className="modal-cabecera">
           <div className="modal-titulo-row">
-            <h3 className="modal-titulo">Añadir ejercicio</h3>
-            <button className="wk-icon-btn" onClick={onCerrar} title="Cerrar">
+            <h3 className="modal-titulo">{t("modal_exercise.add_title")}</h3>
+            <button className="wk-icon-btn" onClick={onCerrar} title={t("modal_exercise.close")}>
               <IcClose />
             </button>
           </div>
@@ -239,7 +242,7 @@ export default function ModalEjercicio({ open, ejerciciosActivos = [], onAnadir,
               type="text"
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Buscar (prensa, mancuernas, pecho...)"
+              placeholder={t("modal_exercise.search_placeholder")}
             />
           </div>
 
@@ -276,11 +279,11 @@ export default function ModalEjercicio({ open, ejerciciosActivos = [], onAnadir,
 
         {/* Lista */}
         <div className="modal-lista">
-          {cargando && <div className="modal-vacio">Cargando ejercicios...</div>}
+          {cargando && <div className="modal-vacio">{t("modal_exercise.loading")}</div>}
 
           {!cargando && resultados.length === 0 && (
             <div className="modal-vacio">
-              Sin resultados{busqueda ? ` para "${busqueda}"` : ""}.
+              {t("modal_exercise.no_results")}{busqueda ? ` para "${busqueda}"` : ""}.
             </div>
           )}
 
@@ -301,7 +304,7 @@ export default function ModalEjercicio({ open, ejerciciosActivos = [], onAnadir,
                   </div>
                 </div>
                 <span className={`modal-ej-accion ${yaAnadido ? "ya-añadido" : "disponible"}`}>
-                  {yaAnadido ? "Añadido" : <><IcPlus /> Añadir</>}
+                  {yaAnadido ? t("modal_exercise.added") : <><IcPlus /> {t("modal_exercise.add")}</>}
                 </span>
               </button>
             );
@@ -315,7 +318,7 @@ export default function ModalEjercicio({ open, ejerciciosActivos = [], onAnadir,
             onClick={() => setVistaCustom(true)}
           >
             <IcPlus />
-            ¿No encuentras el ejercicio? Créalo tú
+            {t("modal_exercise.not_found")}
           </button>
           <button
             className="modal-btn-sync"
@@ -340,7 +343,7 @@ export default function ModalEjercicio({ open, ejerciciosActivos = [], onAnadir,
               <polyline points="1 4 1 10 7 10"/>
               <path d="M3.5 15a9 9 0 1 0 .9-8.7L1 10"/>
             </svg>
-            {syncing ? "Importando…" : "Importar de wger.de"}
+            {syncing ? t("modal_exercise.importing") : t("modal_exercise.import_wger")}
           </button>
           {syncMsg && <p className="modal-sync-msg">{syncMsg}</p>}
         </div>

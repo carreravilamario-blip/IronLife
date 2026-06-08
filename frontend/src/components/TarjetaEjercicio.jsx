@@ -4,6 +4,7 @@
 // ============================================================
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { colorDeGrupo, hexAlfa } from "../ui/grupoColores";
 
 // ── Sparkline: mini gráfico de tendencia ──────────────────────
@@ -39,13 +40,14 @@ function Sparkline({ data = [], width = 80, height = 28 }) {
 // Muestra cada serie de la sesión anterior con kg Y reps visibles.
 // Si hay series de la sesión actual (completadas), las compara en azul.
 function ProgressChart({ seriesAnt = [], seriesHoy = [] }) {
+  const { t } = useTranslation();
   const vacio = seriesAnt.length === 0;
 
   if (vacio) {
     return (
       <div className="prog-vacio">
-        Sin sesiones anteriores para comparar.<br />
-        Completa este ejercicio hoy y la próxima vez verás tu historial aquí.
+        {t("exercise_card.no_prev_sessions")}<br />
+        {t("exercise_card.complete_note")}
       </div>
     );
   }
@@ -64,9 +66,9 @@ function ProgressChart({ seriesAnt = [], seriesHoy = [] }) {
     <div className="prog-panel">
       {/* Leyenda */}
       <div className="prog-leyenda">
-        <span className="prog-ley-ant">● Anterior</span>
+        <span className="prog-ley-ant">{t("exercise_card.legend_prev")}</span>
         {seriesHoy.length > 0 && (
-          <span className="prog-ley-hoy">● Hoy</span>
+          <span className="prog-ley-hoy">{t("exercise_card.legend_today")}</span>
         )}
       </div>
 
@@ -127,14 +129,14 @@ function ProgressChart({ seriesAnt = [], seriesHoy = [] }) {
       {/* Volumen total anterior */}
       <div className="prog-footer">
         <span>
-          Vol. anterior:{" "}
+          {t("exercise_card.vol_prev")}{" "}
           <strong>
             {seriesAnt.reduce((a, s) => a + num(s.kg) * num(s.reps), 0)} kg
           </strong>
         </span>
         {seriesHoy.length > 0 && (
           <span>
-            Vol. hoy:{" "}
+            {t("exercise_card.vol_today")}{" "}
             <strong>
               {seriesHoy.reduce((a, s) => a + num(s.kg) * num(s.reps), 0)} kg
             </strong>
@@ -207,6 +209,7 @@ export default function TarjetaEjercicio({
   onBorrarSerie,
   onEliminarEjercicio,
 }) {
+  const { t } = useTranslation();
   const [chartOpen, setChartOpen] = useState(false);
 
   // Máximo kg anterior para el badge PR y la cabecera
@@ -255,7 +258,7 @@ export default function TarjetaEjercicio({
         <div className="ejercicio-cabecera-der">
           {/* Max anterior */}
           <div className="ejercicio-max">
-            <div className="max-label">Máx. anterior</div>
+            <div className="max-label">{t("exercise_card.prev_max")}</div>
             <div className="max-valor">
               {prevBest > 0 ? `${prevBest} kg` : "—"}
             </div>
@@ -270,7 +273,7 @@ export default function TarjetaEjercicio({
           <button
             className={`wk-icon-btn${chartOpen ? " active" : ""}`}
             onClick={() => setChartOpen((o) => !o)}
-            title="Ver progreso"
+            title={t("exercise_card.view_progress")}
           >
             <IcTrend />
           </button>
@@ -279,7 +282,7 @@ export default function TarjetaEjercicio({
           <button
             className="wk-icon-btn"
             onClick={onEliminarEjercicio}
-            title="Eliminar ejercicio"
+            title={t("exercise_card.remove_exercise")}
           >
             <IcClose />
           </button>
@@ -291,9 +294,9 @@ export default function TarjetaEjercicio({
         <div className="ejercicio-chart">
           <div className="ejercicio-chart-inner">
             <div className="chart-header">
-              <span className="chart-titulo">Sesión anterior · Kg &amp; Reps por serie</span>
+              <span className="chart-titulo">{t("exercise_card.prev_session_title")}</span>
               {hasPR && (
-                <span className="chart-diff up">★ PR — nuevo máximo hoy</span>
+                <span className="chart-diff up">{t("exercise_card.new_pr")}</span>
               )}
             </div>
             <ProgressChart seriesAnt={seriesAnt} seriesHoy={seriesHoy} />
@@ -303,8 +306,8 @@ export default function TarjetaEjercicio({
 
       {/* ── Cabecera de la tabla ── */}
       <div className="series-cabecera">
-        <div className="series-col-header">Serie</div>
-        <div className="series-col-header">Anterior</div>
+        <div className="series-col-header">{t("exercise_card.header_set")}</div>
+        <div className="series-col-header">{t("exercise_card.header_prev")}</div>
         <div className="series-col-header series-col-center">Kg</div>
         <div className="series-col-header series-col-center">Reps</div>
         <div className="series-col-header series-col-center">RIR</div>
@@ -376,7 +379,7 @@ export default function TarjetaEjercicio({
                   onClick={() =>
                     onActualizarSerie(serie.id, { completada: !serie.completada })
                   }
-                  title="Marcar serie"
+                  title={t("exercise_card.mark_set")}
                 >
                   {serie.completada && <IcCheck />}
                 </button>
@@ -387,7 +390,7 @@ export default function TarjetaEjercicio({
                 <button
                   className="serie-del-btn"
                   onClick={() => onBorrarSerie(serie.id)}
-                  title="Quitar serie"
+                  title={t("exercise_card.remove_set")}
                   disabled={series.length <= 1}
                 >
                   <IcMinus />
@@ -402,10 +405,10 @@ export default function TarjetaEjercicio({
       <div className="ejercicio-pie">
         <button className="btn-anadir-serie" onClick={onAnadirSerie}>
           <IcPlus />
-          Añadir serie
+          {t("exercise_card.add_set")}
         </button>
         <span className="ejercicio-volumen">
-          Volumen:{" "}
+          {t("exercise_card.volume_label")}{" "}
           <strong>
             {volumen > 0
               ? `${volumen.toLocaleString("es-ES")} kg`

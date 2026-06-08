@@ -8,6 +8,7 @@
 // ============================================================
 
 import { useState, useMemo, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { WK as V } from "../ui/theme";
 import { COLORES_RUTINA } from "../constants/routines";
 import { MONTHS_SHORT, MONTHS_ES, WEEKDAYS_FULL } from "../constants/dates";
@@ -128,14 +129,15 @@ function FilaSesion({ s, selected, onClick }) {
 
 // ── Panel de detalle ──────────────────────────────────────────
 function DetalleSesion({ s }) {
+  const { t } = useTranslation();
   if (!s) return null;
 
   const color  = s.type === "cardio" ? COLORES_RUTINA.cardio : (COLORES_RUTINA[s.routineId] || "var(--accent)");
   const fechaFull = `${diaSemana(s)}, ${s.d} de ${MONTHS_ES[s.m].toLowerCase()}`;
 
   const stats = s.type === "fuerza"
-    ? [["Volumen", fmtVol(volumenSesion(s))], ["Series", seriesSesion(s)], ["Ejerc.", s.exercises.length], ["Duración", fmtDur(s.mins)]]
-    : [["Distancia", `${s.km} km`], ["Tiempo", fmtReloj(s.sec)], ["Ritmo", fmtRitmo(s.sec, s.km)], ["Kcal", Math.round(s.km * 68)]];
+    ? [[t("history.stat_volume"), fmtVol(volumenSesion(s))], [t("history.stat_sets"), seriesSesion(s)], [t("history.stat_exercises"), s.exercises.length], [t("history.stat_duration"), fmtDur(s.mins)]]
+    : [[t("history.stat_distance"), `${s.km} km`], [t("history.stat_time"), fmtReloj(s.sec)], [t("history.stat_pace"), fmtRitmo(s.sec, s.km)], ["Kcal", Math.round(s.km * 68)]];
 
   return (
     <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 16, overflow: "hidden" }}>
@@ -208,7 +210,7 @@ function DetalleSesion({ s }) {
           <div style={{ padding: "18px 0 4px" }}>
             <div style={{ display: "flex", alignItems: "flex-end", gap: 6, marginBottom: 18 }}>
               <span style={{ fontFamily: "var(--display)", fontSize: 64, lineHeight: 0.9, color: COLORES_RUTINA.cardio }}>{s.km}</span>
-              <span style={{ fontFamily: "var(--mono)", fontSize: 16, color: "var(--muted)", marginBottom: 8 }}>km recorridos</span>
+              <span style={{ fontFamily: "var(--mono)", fontSize: 16, color: "var(--muted)", marginBottom: 8 }}>{t("history.km_ran")}</span>
             </div>
             {s.note && <p style={{ fontFamily: "var(--sans)", fontSize: 14, color: "var(--text2)", margin: 0, lineHeight: 1.5 }}>{s.note}</p>}
           </div>
@@ -220,6 +222,7 @@ function DetalleSesion({ s }) {
 
 // ── Componente principal ──────────────────────────────────────
 export default function PantallaHistorial() {
+  const { t } = useTranslation();
   const { usuario, token } = useAuth();
   const [filtro, setFiltro]         = useState("todo");
   const [selId, setSelId]           = useState(null);
@@ -273,23 +276,23 @@ export default function PantallaHistorial() {
       <header className="historial-header">
         <div>
           <div style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--accent)", marginBottom: 8 }}>
-            {cargando ? "Cargando…" : `${todas.length} sesiones registradas`}
+            {cargando ? t("history.loading") : t("history.sessions_count", { count: todas.length })}
           </div>
           <h1 style={{ margin: 0, fontFamily: "var(--display)", fontSize: 40, textTransform: "uppercase", letterSpacing: "0.005em" }}>
-            Historial
+            {t("history.title")}
           </h1>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
-          <Chip active={filtro === "todo"}    onClick={() => setFiltro("todo")}>Todo</Chip>
-          <Chip active={filtro === "fuerza"}  color="var(--accent)" onClick={() => setFiltro("fuerza")}>Fuerza</Chip>
-          <Chip active={filtro === "cardio"}  color={COLORES_RUTINA.cardio} onClick={() => setFiltro("cardio")}>Cardio</Chip>
+          <Chip active={filtro === "todo"}    onClick={() => setFiltro("todo")}>{t("history.filter_all")}</Chip>
+          <Chip active={filtro === "fuerza"}  color="var(--accent)" onClick={() => setFiltro("fuerza")}>{t("history.filter_strength")}</Chip>
+          <Chip active={filtro === "cardio"}  color={COLORES_RUTINA.cardio} onClick={() => setFiltro("cardio")}>{t("history.filter_cardio")}</Chip>
         </div>
       </header>
 
       {/* Estado de carga */}
       {cargando && (
         <div style={{ textAlign: "center", padding: "60px 0", color: "var(--faint)", fontFamily: "var(--mono)", fontSize: 13 }}>
-          Cargando sesiones…
+          {t("history.loading")}
         </div>
       )}
 
@@ -301,8 +304,8 @@ export default function PantallaHistorial() {
             {lista.length === 0 ? (
               <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",flex:1,gap:16,padding:"60px 32px",color:"var(--muted)"}}>
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{opacity:0.3}}><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg>
-                <div style={{fontFamily:"var(--mono)",fontSize:11,letterSpacing:"0.12em",textTransform:"uppercase",opacity:0.4,textAlign:"center"}}>Aún no tienes sesiones registradas</div>
-                <div style={{fontFamily:"var(--sans)",fontSize:13,opacity:0.3,textAlign:"center"}}>Completa tu primer entrenamiento para ver tu historial aquí</div>
+                <div style={{fontFamily:"var(--mono)",fontSize:11,letterSpacing:"0.12em",textTransform:"uppercase",opacity:0.4,textAlign:"center"}}>{t("history.no_sessions_title")}</div>
+                <div style={{fontFamily:"var(--sans)",fontSize:13,opacity:0.3,textAlign:"center"}}>{t("history.no_sessions_desc")}</div>
               </div>
             ) : (
               grupos.map((g) => (

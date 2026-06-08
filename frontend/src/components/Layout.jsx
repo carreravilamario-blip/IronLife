@@ -4,6 +4,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context";
 import { crearRutina, borrarRutina } from "../api";
 import { useTheme } from "../hooks/useTheme";
@@ -59,6 +60,7 @@ const DumbbellMark = () => (
 
 // ── Modal para crear rutina ────────────────────────────────────
 function ModalNuevaRutina({ onCerrar }) {
+  const { t } = useTranslation();
   const { token, agregarRutina } = useAuth();
   const [nombre, setNombre]           = useState("");
   const [descripcion, setDescripcion] = useState("");
@@ -81,7 +83,7 @@ function ModalNuevaRutina({ onCerrar }) {
   async function manejarGuardar(e) {
     e.preventDefault();
     const nombreLimpio = nombre.trim();
-    if (!nombreLimpio) { setError("El nombre no puede estar vacío."); return; }
+    if (!nombreLimpio) { setError(t("common.error_name_empty")); return; }
     setGuardando(true);
     setError("");
     try {
@@ -107,32 +109,32 @@ function ModalNuevaRutina({ onCerrar }) {
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        aria-label="Nueva rutina"
+        aria-label={t("routine.new_title")}
       >
-        <h3 className="modal-nr-titulo">Nueva rutina</h3>
+        <h3 className="modal-nr-titulo">{t("routine.new_title")}</h3>
 
         <form onSubmit={manejarGuardar}>
           <label className="modal-nr-label">
-            Nombre
+            {t("routine.name_label")}
             <input
               ref={inputRef}
               className="modal-nr-input"
               type="text"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
-              placeholder="Ej: Empuje · Push"
+              placeholder={t("routine.name_placeholder")}
               maxLength={120}
             />
           </label>
 
           <label className="modal-nr-label">
-            Descripción <span style={{ color: "var(--muted)", fontWeight: 400 }}>(opcional)</span>
+            {t("routine.desc_label")} <span style={{ color: "var(--muted)", fontWeight: 400 }}>{t("routine.optional")}</span>
             <input
               className="modal-nr-input"
               type="text"
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
-              placeholder="Ej: Pecho · Hombro · Tríceps"
+              placeholder={t("routine.desc_placeholder")}
               maxLength={120}
             />
           </label>
@@ -145,14 +147,14 @@ function ModalNuevaRutina({ onCerrar }) {
               className="modal-nr-btn modal-nr-btn-cancel"
               onClick={onCerrar}
             >
-              Cancelar
+              {t("common.cancel")}
             </button>
             <button
               type="submit"
               className="modal-nr-btn modal-nr-btn-ok"
               disabled={guardando}
             >
-              {guardando ? "Guardando…" : "Crear rutina"}
+              {guardando ? t("common.saving") : t("routine.create_btn")}
             </button>
           </div>
         </form>
@@ -181,6 +183,7 @@ const IcTrash = () => (
 
 // ── Item de rutina con borrado inline ─────────────────────────
 function RutinaItem({ rutina, estaActiva }) {
+  const { t } = useTranslation();
   const { token, quitarRutina } = useAuth();
   const navigate = useNavigate();
   const [confirmando, setConfirmando] = useState(false);
@@ -207,7 +210,7 @@ function RutinaItem({ rutina, estaActiva }) {
     return (
       <div className="rutina-item rutina-item-confirmar">
         <span className="rutina-confirmar-texto">
-          ¿Eliminar <strong>{rutina.nombre}</strong>?
+          {t("routine.confirm_delete", { name: rutina.nombre })}
         </span>
         {errorBorrar && (
           <span className="rutina-confirmar-error">{errorBorrar}</span>
@@ -218,13 +221,13 @@ function RutinaItem({ rutina, estaActiva }) {
             onClick={manejarBorrar}
             disabled={borrando}
           >
-            {borrando ? "…" : "Sí"}
+            {borrando ? "…" : t("common.yes")}
           </button>
           <button
             className="rutina-btn-no"
             onClick={(e) => { e.preventDefault(); setConfirmando(false); setErrorBorrar(""); }}
           >
-            No
+            {t("common.no")}
           </button>
         </div>
       </div>
@@ -244,8 +247,8 @@ function RutinaItem({ rutina, estaActiva }) {
         <button
           className="rutina-btn-editar"
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/rutinas/${rutina.id}/editar`); }}
-          title="Editar rutina"
-          aria-label={`Editar ${rutina.nombre}`}
+          title={t("routine.edit")}
+          aria-label={`${t("routine.edit")} ${rutina.nombre}`}
         >
           <IcEdit />
         </button>
@@ -253,8 +256,8 @@ function RutinaItem({ rutina, estaActiva }) {
         <button
           className="rutina-btn-borrar"
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); setConfirmando(true); }}
-          title="Eliminar rutina"
-          aria-label={`Eliminar ${rutina.nombre}`}
+          title={t("routine.delete")}
+          aria-label={`${t("routine.delete")} ${rutina.nombre}`}
         >
           <IcTrash />
         </button>
@@ -266,11 +269,14 @@ function RutinaItem({ rutina, estaActiva }) {
 
 // ── Componente principal ──────────────────────────────────────
 export default function Layout({ onCerrarSesion, children }) {
+  const { t, i18n } = useTranslation();
   const { usuario, rutinas } = useAuth();
   const { rutinaId } = useParams();
   const [modalAbierto, setModalAbierto] = useState(false);
   const inicial = usuario?.nombre?.[0]?.toUpperCase() ?? "U";
   const { modo, toggleTema } = useTheme();
+  const idiomaActual = i18n.language?.startsWith("en") ? "en" : "es";
+  const toggleIdioma = () => i18n.changeLanguage(idiomaActual === "es" ? "en" : "es");
 
   return (
     <div className="layout">
@@ -285,19 +291,19 @@ export default function Layout({ onCerrarSesion, children }) {
         {/* Navegación */}
         <nav className="sidebar-nav">
           <NavLink to="/" end className={({ isActive }) => "nav-item" + (isActive ? " activo" : "")}>
-            <IcHome /> Inicio
+            <IcHome /> {t("nav.home")}
           </NavLink>
           <NavLink to="/entrenar" className={({ isActive }) => "nav-item" + (isActive ? " activo" : "")}>
-            <IcDumb /> Entrenar
+            <IcDumb /> {t("nav.train")}
           </NavLink>
           <NavLink to="/progreso" className={({ isActive }) => "nav-item" + (isActive ? " activo" : "")}>
-            <IcChart /> Progreso
+            <IcChart /> {t("nav.progress")}
           </NavLink>
           <NavLink to="/historial" className={({ isActive }) => "nav-item" + (isActive ? " activo" : "")}>
-            <IcHist /> Historial
+            <IcHist /> {t("nav.history")}
           </NavLink>
           <NavLink to="/calculadora" className={({ isActive }) => "nav-item" + (isActive ? " activo" : "")}>
-            <IcCalc /> Calculadora
+            <IcCalc /> {t("nav.calculator")}
           </NavLink>
         </nav>
 
@@ -305,12 +311,12 @@ export default function Layout({ onCerrarSesion, children }) {
         <div className="sidebar-rutinas">
           {/* Cabecera con botón "+" */}
           <div className="sidebar-rutinas-header">
-            <p className="sidebar-seccion-titulo">Rutinas guardadas</p>
+            <p className="sidebar-seccion-titulo">{t("nav.saved_routines")}</p>
             <button
               className="sidebar-btn-nueva-rutina"
               onClick={() => setModalAbierto(true)}
-              title="Nueva rutina"
-              aria-label="Crear nueva rutina"
+              title={t("nav.new_routine")}
+              aria-label={t("nav.new_routine")}
             >
               <IcPlus />
             </button>
@@ -319,7 +325,7 @@ export default function Layout({ onCerrarSesion, children }) {
           {/* Lista de rutinas */}
           {rutinas.length === 0 ? (
             <p className="sidebar-rutinas-vacio">
-              Crea tu primera rutina con el botón +
+              {t("nav.no_routines")}
             </p>
           ) : (
             rutinas.map((r) => (
@@ -333,7 +339,7 @@ export default function Layout({ onCerrarSesion, children }) {
         </div>
 
         {/* Toggle tema */}
-        <button className="theme-toggle" onClick={toggleTema} title={modo === "dark" ? "Activar modo claro" : "Activar modo oscuro"}>
+        <button className="theme-toggle" onClick={toggleTema} title={modo === "dark" ? t("nav.light_mode") : t("nav.dark_mode")}>
           {modo === "dark" ? (
             <>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -343,16 +349,26 @@ export default function Layout({ onCerrarSesion, children }) {
                 <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
                 <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
               </svg>
-              Modo claro
+              {t("nav.light_mode")}
             </>
           ) : (
             <>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
               </svg>
-              Modo oscuro
+              {t("nav.dark_mode")}
             </>
           )}
+        </button>
+
+        {/* Toggle idioma */}
+        <button className="theme-toggle" onClick={toggleIdioma} title={t("nav.language")}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M3.6 9h16.8M3.6 15h16.8"/>
+            <path d="M12 3a14.6 14.6 0 0 1 0 18M12 3a14.6 14.6 0 0 0 0 18"/>
+          </svg>
+          {idiomaActual === "es" ? "ES → EN" : "EN → ES"}
         </button>
 
         {/* Usuario */}
@@ -360,9 +376,9 @@ export default function Layout({ onCerrarSesion, children }) {
           <div className="usuario-avatar">{inicial}</div>
           <div className="usuario-info">
             <span className="usuario-nombre">{usuario?.nombre}</span>
-            <span className="usuario-plan">Plan PRO</span>
+            <span className="usuario-plan">{t("nav.pro_plan")}</span>
           </div>
-          <button className="cerrar-sesion-btn" onClick={onCerrarSesion} title="Cerrar sesión">
+          <button className="cerrar-sesion-btn" onClick={onCerrarSesion} title={t("nav.logout")}>
             <IcLogout />
           </button>
         </div>

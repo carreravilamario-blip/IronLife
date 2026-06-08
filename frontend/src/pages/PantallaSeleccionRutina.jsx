@@ -4,6 +4,7 @@
 // ============================================================
 
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context";
 import { WK as H, hexA, ACCENT_HEX } from "../ui/theme";
 
@@ -26,6 +27,7 @@ const IcDumbbell = () => (
 );
 
 export default function PantallaSeleccionRutina() {
+  const { t } = useTranslation();
   const { rutinas } = useAuth();
   const navigate = useNavigate();
 
@@ -36,11 +38,11 @@ export default function PantallaSeleccionRutina() {
       <header style={{ padding: "24px 32px 22px", borderBottom: `1px solid ${H.line}` }}>
         <div style={{ fontFamily: H.mono, fontSize: 11, letterSpacing: "0.16em",
           textTransform: "uppercase", color: H.accent, marginBottom: 8 }}>
-          Sesión de hoy
+          {t("selection.today_session")}
         </div>
         <h1 style={{ margin: 0, fontFamily: H.anton, fontSize: 40,
           textTransform: "uppercase", letterSpacing: "0.005em", fontWeight: 700 }}>
-          ¿Qué entrenas hoy?
+          {t("selection.what_train")}
         </h1>
       </header>
 
@@ -58,10 +60,10 @@ export default function PantallaSeleccionRutina() {
             <div>
               <p style={{ fontFamily: H.sans, fontWeight: 700, fontSize: 18,
                 color: H.text, margin: "0 0 8px" }}>
-                Aún no tienes rutinas
+                {t("selection.no_routines_title")}
               </p>
               <p style={{ fontFamily: H.mono, fontSize: 12, color: H.muted, margin: 0 }}>
-                Crea una desde el botón + del menú lateral
+                {t("selection.no_routines_desc")}
               </p>
             </div>
           </div>
@@ -120,7 +122,7 @@ export default function PantallaSeleccionRutina() {
                   <div style={{ fontFamily: H.mono, fontSize: 11,
                     color: H.faint, letterSpacing: "0.08em",
                     textTransform: "uppercase", marginTop: "auto" }}>
-                    {r.ejercicios?.length ?? 0} ejercicio{(r.ejercicios?.length ?? 0) !== 1 ? "s" : ""}
+                    {t("routine.exercises", { count: r.ejercicios?.length ?? 0 })}
                   </div>
                 </button>
               );

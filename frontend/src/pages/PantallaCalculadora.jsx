@@ -7,6 +7,7 @@
 // ============================================================
 
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { WK as H, ACCENT_HEX, hexA } from "../ui/theme";
 
 // --------------- helpers de cálculo ---------------
@@ -18,18 +19,18 @@ function calcBMR(genero, peso, altura, edad) {
   return 447.593 + 9.247 * peso + 3.098 * altura - 4.33 * edad;
 }
 
-const ACTIVITY_OPTIONS = [
-  { id: "sedentario",  label: "Sedentario",   desc: "Poco o nada de ejercicio",  factor: 1.2   },
-  { id: "ligero",      label: "Ligero",        desc: "1-3 días/semana",           factor: 1.375 },
-  { id: "moderado",    label: "Moderado",      desc: "3-5 días/semana",           factor: 1.55  },
-  { id: "activo",      label: "Activo",        desc: "6-7 días/semana",           factor: 1.725 },
-  { id: "muy_activo",  label: "Muy activo",    desc: "2x al día",                 factor: 1.9   },
+const ACTIVITY_FACTORS = [
+  { id: "sedentario",  factor: 1.2   },
+  { id: "ligero",      factor: 1.375 },
+  { id: "moderado",    factor: 1.55  },
+  { id: "activo",      factor: 1.725 },
+  { id: "muy_activo",  factor: 1.9   },
 ];
 
-const OBJETIVO_OPTIONS = [
-  { id: "perder",   label: "Perder peso",    factor: 0.80 },
-  { id: "mantener", label: "Mantener",       factor: 1.00 },
-  { id: "ganar",    label: "Ganar músculo",  factor: 1.15 },
+const OBJETIVO_FACTORS = [
+  { id: "perder",   factor: 0.80 },
+  { id: "mantener", factor: 1.00 },
+  { id: "ganar",    factor: 1.15 },
 ];
 
 // --------------- sub-componentes ---------------
@@ -169,6 +170,7 @@ function StatCard({ label, value, unit, accent }) {
 // --------------- página principal ---------------
 
 export default function PantallaCalculadora() {
+  const { t } = useTranslation();
   const [genero,    setGenero]    = useState("hombre");
   const [edad,      setEdad]      = useState("");
   const [peso,      setPeso]      = useState("");
@@ -176,12 +178,26 @@ export default function PantallaCalculadora() {
   const [actividad, setActividad] = useState("moderado");
   const [objetivo,  setObjetivo]  = useState("mantener");
 
+  const ACTIVITY_OPTIONS = [
+    { id: "sedentario",  label: t("calculator.sedentary"),   desc: t("calculator.sedentary_desc"),  factor: 1.2   },
+    { id: "ligero",      label: t("calculator.light"),       desc: t("calculator.light_desc"),      factor: 1.375 },
+    { id: "moderado",    label: t("calculator.moderate"),    desc: t("calculator.moderate_desc"),   factor: 1.55  },
+    { id: "activo",      label: t("calculator.active"),      desc: t("calculator.active_desc"),     factor: 1.725 },
+    { id: "muy_activo",  label: t("calculator.very_active"), desc: t("calculator.very_active_desc"),factor: 1.9   },
+  ];
+
+  const OBJETIVO_OPTIONS = [
+    { id: "perder",   label: t("calculator.lose_weight"), factor: 0.80 },
+    { id: "mantener", label: t("calculator.maintain"),    factor: 1.00 },
+    { id: "ganar",    label: t("calculator.gain_muscle"), factor: 1.15 },
+  ];
+
   const resultado = useMemo(() => {
     const e = Number(edad), p = Number(peso), a = Number(altura);
     if (!e || !p || !a || e <= 0 || p <= 0 || a <= 0) return null;
 
-    const actFactor = ACTIVITY_OPTIONS.find((o) => o.id === actividad)?.factor ?? 1.55;
-    const objFactor = OBJETIVO_OPTIONS.find((o) => o.id === objetivo)?.factor ?? 1.0;
+    const actFactor = ACTIVITY_FACTORS.find((o) => o.id === actividad)?.factor ?? 1.55;
+    const objFactor = OBJETIVO_FACTORS.find((o) => o.id === objetivo)?.factor ?? 1.0;
 
     const bmr    = Math.round(calcBMR(genero, p, a, e));
     const tdee   = Math.round(bmr * actFactor);
@@ -206,10 +222,10 @@ export default function PantallaCalculadora() {
       {/* ---- HEADER ---- */}
       <header style={{ padding: "24px 32px 22px", borderBottom: `1px solid ${H.line}` }}>
         <div style={{ fontFamily: H.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: H.accent, marginBottom: 8 }}>
-          Calorías diarias necesarias
+          {t("calculator.subtitle")}
         </div>
         <h1 style={{ margin: 0, fontFamily: H.anton, fontSize: 40, textTransform: "uppercase", letterSpacing: "0.005em", fontWeight: 700 }}>
-          Calculadora
+          {t("calculator.title")}
         </h1>
       </header>
 
@@ -221,12 +237,12 @@ export default function PantallaCalculadora() {
 
             {/* Género */}
             <div style={{ background: H.card, border: `1px solid ${H.line}`, borderRadius: 16, padding: 20 }}>
-              <SectionTitle>Género</SectionTitle>
+              <SectionTitle>{t("calculator.gender")}</SectionTitle>
               <div style={{ display: "flex", gap: 10 }}>
                 {["hombre", "mujer"].map((g) => (
                   <ToggleChip
                     key={g}
-                    label={g === "hombre" ? "Hombre" : "Mujer"}
+                    label={g === "hombre" ? t("calculator.male") : t("calculator.female")}
                     active={genero === g}
                     onClick={() => setGenero(g)}
                   />
@@ -236,10 +252,10 @@ export default function PantallaCalculadora() {
 
             {/* Datos físicos */}
             <div style={{ background: H.card, border: `1px solid ${H.line}`, borderRadius: 16, padding: 20 }}>
-              <SectionTitle>Datos físicos</SectionTitle>
+              <SectionTitle>{t("calculator.physical_data")}</SectionTitle>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
                 <NumberField
-                  label="Edad"
+                  label={t("calculator.age")}
                   unit="años"
                   value={edad}
                   onChange={setEdad}
@@ -248,7 +264,7 @@ export default function PantallaCalculadora() {
                   placeholder="25"
                 />
                 <NumberField
-                  label="Peso"
+                  label={t("calculator.weight")}
                   unit="kg"
                   value={peso}
                   onChange={setPeso}
@@ -257,7 +273,7 @@ export default function PantallaCalculadora() {
                   placeholder="75"
                 />
                 <NumberField
-                  label="Altura"
+                  label={t("calculator.height")}
                   unit="cm"
                   value={altura}
                   onChange={setAltura}
@@ -270,7 +286,7 @@ export default function PantallaCalculadora() {
 
             {/* Nivel de actividad */}
             <div style={{ background: H.card, border: `1px solid ${H.line}`, borderRadius: 16, padding: 20 }}>
-              <SectionTitle>Nivel de actividad</SectionTitle>
+              <SectionTitle>{t("calculator.activity_level")}</SectionTitle>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {ACTIVITY_OPTIONS.map((opt) => (
                   <ToggleChip
@@ -286,7 +302,7 @@ export default function PantallaCalculadora() {
 
             {/* Objetivo */}
             <div style={{ background: H.card, border: `1px solid ${H.line}`, borderRadius: 16, padding: 20 }}>
-              <SectionTitle>Objetivo</SectionTitle>
+              <SectionTitle>{t("calculator.goal")}</SectionTitle>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 {OBJETIVO_OPTIONS.map((opt) => (
                   <ToggleChip
@@ -319,23 +335,20 @@ export default function PantallaCalculadora() {
               }}>
                 <div style={{ fontSize: 36, opacity: 0.25 }}>⚡</div>
                 <div style={{ fontFamily: H.mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: H.faint, textAlign: "center" }}>
-                  Completa los datos para ver
-                </div>
-                <div style={{ fontFamily: H.mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: H.faint, textAlign: "center" }}>
-                  tu resultado
+                  {t("calculator.complete_data")}
                 </div>
               </div>
             ) : (
               <>
                 {/* Tarjeta principal de resultados */}
                 <div style={{ background: H.card, border: `1px solid ${H.line}`, borderRadius: 16, padding: 24 }}>
-                  <SectionTitle>Resultados</SectionTitle>
+                  <SectionTitle>{t("calculator.results")}</SectionTitle>
 
                   {/* BMR y TDEE */}
                   <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
                     <div style={{ flex: 1, background: H.panel2, border: `1px solid ${H.line2}`, borderRadius: 11, padding: "13px 16px" }}>
                       <div style={{ fontFamily: H.mono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: H.faint, marginBottom: 6 }}>
-                        BMR · Basal
+                        {t("calculator.bmr")}
                       </div>
                       <div style={{ fontFamily: H.mono, fontSize: 22, fontWeight: 700, color: H.text2 }}>
                         {resultado.bmr.toLocaleString("es")}
@@ -344,7 +357,7 @@ export default function PantallaCalculadora() {
                     </div>
                     <div style={{ flex: 1, background: H.panel2, border: `1px solid ${H.line2}`, borderRadius: 11, padding: "13px 16px" }}>
                       <div style={{ fontFamily: H.mono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: H.faint, marginBottom: 6 }}>
-                        TDEE · Mantenimiento
+                        {t("calculator.tdee")}
                       </div>
                       <div style={{ fontFamily: H.mono, fontSize: 22, fontWeight: 700, color: H.text2 }}>
                         {resultado.tdee.toLocaleString("es")}
@@ -367,11 +380,11 @@ export default function PantallaCalculadora() {
                   }}>
                     <div>
                       <div style={{ fontFamily: H.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: hexA(ACCENT_HEX, 0.7), marginBottom: 4 }}>
-                        Objetivo calórico · {objLabel}
+                        {t("calculator.caloric_goal", { label: objLabel })}
                       </div>
                       <div style={{ fontFamily: H.anton, fontSize: 44, lineHeight: 1, color: H.accent, fontWeight: 700 }}>
-                        {resultado.target.toLocaleString("es")}
-                        <span style={{ fontFamily: H.mono, fontSize: 16, marginLeft: 8, color: hexA(ACCENT_HEX, 0.7) }}>kcal/día</span>
+                        {resultado.target.toLocaleString()}
+                        <span style={{ fontFamily: H.mono, fontSize: 16, marginLeft: 8, color: hexA(ACCENT_HEX, 0.7) }}>{t("calculator.kcal_day")}</span>
                       </div>
                     </div>
                     <div style={{
@@ -396,22 +409,22 @@ export default function PantallaCalculadora() {
                   {/* Macros sugeridos */}
                   <div style={{ marginBottom: 4 }}>
                     <div style={{ fontFamily: H.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: H.faint, marginBottom: 14 }}>
-                      Macros sugeridos
+                      {t("calculator.macros")}
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                      <MacroBar label="Proteína"      grams={resultado.protG} kcal={resultado.protKcal} color="#3ecf8e" />
-                      <MacroBar label="Carbohidratos" grams={resultado.carbG} kcal={resultado.carbKcal} color="#38bdf8" />
-                      <MacroBar label="Grasas"        grams={resultado.fatG}  kcal={resultado.fatKcal}  color={ACCENT_HEX} />
+                      <MacroBar label={t("calculator.protein")}      grams={resultado.protG} kcal={resultado.protKcal} color="#3ecf8e" />
+                      <MacroBar label={t("calculator.carbs")}        grams={resultado.carbG} kcal={resultado.carbKcal} color="#38bdf8" />
+                      <MacroBar label={t("calculator.fats")}         grams={resultado.fatG}  kcal={resultado.fatKcal}  color={ACCENT_HEX} />
                     </div>
                   </div>
                 </div>
 
                 {/* Tarjetas de stats resumen */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <StatCard label="Calorías objetivo" value={resultado.target.toLocaleString("es")} unit="kcal" accent />
-                  <StatCard label="Proteína"           value={resultado.protG} unit="g/día" />
-                  <StatCard label="Carbohidratos"      value={resultado.carbG} unit="g/día" />
-                  <StatCard label="Grasas"             value={resultado.fatG}  unit="g/día" />
+                  <StatCard label={t("calculator.stat_caloric_goal")} value={resultado.target.toLocaleString()} unit="kcal" accent />
+                  <StatCard label={t("calculator.protein")}           value={resultado.protG} unit={t("calculator.g_day")} />
+                  <StatCard label={t("calculator.carbs")}             value={resultado.carbG} unit={t("calculator.g_day")} />
+                  <StatCard label={t("calculator.fats")}              value={resultado.fatG}  unit={t("calculator.g_day")} />
                 </div>
 
                 {/* Nota metódica */}
@@ -430,7 +443,7 @@ export default function PantallaCalculadora() {
                     <line x1="12" y1="16" x2="12.01" y2="16" />
                   </svg>
                   <p style={{ margin: 0, fontFamily: H.mono, fontSize: 10.5, lineHeight: 1.55, color: H.faint, letterSpacing: "0.02em" }}>
-                    Fórmula Harris-Benedict revisada (Mifflin-St Jeor base). Los macros son orientativos: proteína 2 g/kg, grasas 25% de calorías, carbohidratos el resto. Ajusta según respuesta real.
+                    {t("calculator.formula_note")}
                   </p>
                 </div>
               </>

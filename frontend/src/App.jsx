@@ -4,6 +4,7 @@
 // ============================================================
 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { AuthProvider, useAuth } from "./context";
 import AuthForm from "./components/AuthForm";
 import Layout from "./components/Layout";
@@ -18,25 +19,25 @@ import "./App.css";
 
 // ── Pantalla provisional para secciones futuras ───────────────
 function PantallaPronto({ nombre }) {
+  const { t } = useTranslation();
   return (
     <div className="pantalla-vacia">
       <p style={{ fontSize: 40, margin: "0 0 16px" }}>🚧</p>
       <h2>{nombre}</h2>
-      <p>Esta sección estará disponible pronto.</p>
+      <p>{t("app.coming_soon")}</p>
     </div>
   );
 }
 
 // ── Shell autenticado ─────────────────────────────────────────
-// Separado en su propio componente para poder leer el contexto
-// (App exporta el Provider, y useAuth necesita estar dentro de él).
 function AppShell() {
+  const { t } = useTranslation();
   const { usuario, rutinas, cargando, iniciarSesion, cerrarSesion } = useAuth();
 
   if (cargando) {
     return (
       <div className="contenedor">
-        <p className="cargando-pantalla">Cargando...</p>
+        <p className="cargando-pantalla">{t("app.loading")}</p>
       </div>
     );
   }

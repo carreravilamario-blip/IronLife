@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useRef, useCallback, useReducer } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import TarjetaEjercicio from "../components/TarjetaEjercicio";
 import ModalEjercicio from "../components/ModalEjercicio";
 import { useAuth } from "../context";
@@ -136,6 +137,7 @@ function num(v) {
 const REST_DURATION = 90;
 
 export default function PantallaEntrenar() {
+  const { t, i18n } = useTranslation();
   const { token, rutinas } = useAuth();
   const { rutinaId } = useParams();
   const navigate     = useNavigate();
@@ -345,7 +347,8 @@ export default function PantallaEntrenar() {
       guardarDiaEnCalendario(rutina.nombre);
       guardarEnHistorial(rutina, ejerciciosActivos, elapsed);
       setFinalizado(true);
-      setToast(`Sesión guardada · ${mins} min · ${nEjercicios} ejercicio${nEjercicios !== 1 ? "s" : ""}`);
+      const toastKey = nEjercicios !== 1 ? "training.session_saved_plural" : "training.session_saved";
+      setToast(t(toastKey, { mins, exercises: nEjercicios }));
     } catch { /* noop */ }
   };
 
@@ -373,13 +376,13 @@ export default function PantallaEntrenar() {
               <path d="M9 14.5h6l-.5 3.5h-5l-.5-3.5Z"/><path d="M8 21h8"/>
             </svg>
           </div>
-          <h2>SESIÓN COMPLETADA</h2>
+          <h2>{t("training.session_done")}</h2>
           <p className="fin-stats">
-            {seriesCompletadas} series &middot; {volumenTotal.toLocaleString("es-ES")} kg de volumen
+            {seriesCompletadas} {t("training.sets").toLowerCase()} &middot; {volumenTotal.toLocaleString(i18n.language)} kg
           </p>
           {toast && <p className="fin-toast">{toast}</p>}
           <button className="btn-naranja" onClick={() => navigate("/")}>
-            Volver al inicio
+            {t("training.back_home")}
           </button>
         </div>
       </div>
@@ -389,7 +392,7 @@ export default function PantallaEntrenar() {
   if (cargando) {
     return (
       <div className="pantalla-vacia">
-        <p className="cargando-pantalla">Preparando sesión...</p>
+        <p className="cargando-pantalla">{t("training.preparing")}</p>
       </div>
     );
   }
@@ -405,12 +408,13 @@ export default function PantallaEntrenar() {
   if (!rutina) {
     return (
       <div className="pantalla-vacia">
-        <h2>Elige una rutina del menú lateral.</h2>
+        <h2>{t("training.choose_routine")}</h2>
       </div>
     );
   }
 
-  const hoy = new Date().toLocaleDateString("es-ES", {
+  const locale = i18n.language?.startsWith("en") ? "en-GB" : "es-ES";
+  const hoy = new Date().toLocaleDateString(locale, {
     weekday: "long", day: "numeric", month: "long",
   });
 
@@ -420,7 +424,7 @@ export default function PantallaEntrenar() {
       <div className="entrenar-header">
         <div className="entrenar-header-inner">
           <div>
-            <p className="entrenar-fecha">Sesión de hoy &middot; {hoy.toUpperCase()}</p>
+            <p className="entrenar-fecha">{t("training.session_header")} &middot; {hoy.toUpperCase()}</p>
             <h1 className="entrenar-titulo">{rutina.nombre.toUpperCase()}</h1>
           </div>
 
@@ -428,13 +432,13 @@ export default function PantallaEntrenar() {
             {/* Cronómetro */}
             <div className={`timer-widget${timer.running ? " running" : ""}`}>
               <div className="timer-info">
-                <span className="timer-label">Tiempo</span>
+                <span className="timer-label">{t("training.time")}</span>
                 <span className="timer-display">{fmtTimer(elapsed)}</span>
               </div>
               <button
                 className="timer-btn-play"
                 onClick={timer.running ? pauseTimer : startTimer}
-                title={timer.running ? "Pausar" : "Iniciar"}
+                title={timer.running ? t("training.pause") : t("training.start")}
               >
                 {timer.running ? <IcPause /> : <IcPlay />}
               </button>
@@ -442,7 +446,7 @@ export default function PantallaEntrenar() {
                 className="timer-btn-reset wk-icon-btn"
                 onClick={resetTimer}
                 disabled={elapsed === 0}
-                title="Reiniciar"
+                title={t("training.restart")}
               >
                 <IcReset />
               </button>
@@ -450,20 +454,20 @@ export default function PantallaEntrenar() {
 
             {/* Stats */}
             <div className="stat-chip">
-              <span className="stat-label">Volumen</span>
+              <span className="stat-label">{t("training.volume")}</span>
               <span className="stat-valor accent">{volumenStr}</span>
             </div>
             <div className="stat-chip">
-              <span className="stat-label">Series</span>
+              <span className="stat-label">{t("training.sets")}</span>
               <span className="stat-valor">{seriesCompletadas}/{todasSeries.length}</span>
             </div>
             <div className="stat-chip">
-              <span className="stat-label">Ejerc.</span>
+              <span className="stat-label">{t("training.exercises_abbr")}</span>
               <span className="stat-valor">{ejerciciosActivos.length}</span>
             </div>
 
             <button className="btn-naranja" onClick={manejarFinalizar}>
-              Finalizar
+              {t("training.finish")}
             </button>
           </div>
         </div>
@@ -474,7 +478,7 @@ export default function PantallaEntrenar() {
         <div className="ejercicios-inner">
           {ejerciciosActivos.length === 0 && (
             <div style={{ textAlign: "center", padding: "60px 0", color: "var(--muted)", fontFamily: "var(--mono)", fontSize: 13 }}>
-              No hay ejercicios. Añade el primero con el botón de abajo.
+              {t("training.no_exercises")}
             </div>
           )}
 
@@ -495,7 +499,7 @@ export default function PantallaEntrenar() {
 
           <button className="btn-añadir-ejercicio" onClick={() => setModalOpen(true)}>
             <IcPlus />
-            Añadir ejercicio
+            {t("training.add_exercise")}
           </button>
         </div>
       </div>
@@ -541,7 +545,7 @@ export default function PantallaEntrenar() {
                 fontFamily: "var(--mono, monospace)",
               }}
             >
-              Descanso
+              {t("training.rest")}
             </span>
 
             {/* Countdown */}
@@ -598,7 +602,7 @@ export default function PantallaEntrenar() {
               onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.07)"; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
             >
-              Saltar →
+              {t("training.skip")}
             </button>
           </div>
         </div>
