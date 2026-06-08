@@ -89,7 +89,7 @@ function NumberField({ label, unit, value, onChange, min = 1, max = 999, placeho
       <label style={{ fontFamily: H.mono, fontSize: 10.5, letterSpacing: "0.1em", textTransform: "uppercase", color: H.muted }}>
         {label}
       </label>
-      <div style={{ display: "flex", alignItems: "center", gap: 0, background: H.field, border: `1px solid ${H.line}`, borderRadius: 10, overflow: "hidden" }}>
+      <div style={{ display: "flex", alignItems: "center", background: H.field, border: `1px solid ${H.line}`, borderRadius: 10, overflow: "hidden" }}>
         <input
           type="number"
           min={min}
@@ -102,21 +102,23 @@ function NumberField({ label, unit, value, onChange, min = 1, max = 999, placeho
             background: "transparent",
             border: "none",
             outline: "none",
-            padding: "11px 14px",
+            padding: "12px 10px 12px 14px",
             fontFamily: H.mono,
-            fontSize: 16,
-            fontWeight: 600,
+            fontSize: 20,
+            fontWeight: 700,
             color: H.text,
             width: "100%",
+            minWidth: 0,
+            WebkitTextFillColor: H.text,
           }}
         />
         {unit && (
           <span style={{
             fontFamily: H.mono,
-            fontSize: 12,
-            color: H.faint,
-            paddingRight: 14,
-            letterSpacing: "0.06em",
+            fontSize: 11,
+            color: H.muted,
+            paddingRight: 10,
+            letterSpacing: "0.04em",
             flexShrink: 0,
           }}>
             {unit}

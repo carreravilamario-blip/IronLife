@@ -87,6 +87,16 @@ input, button, select, textarea {
   font-family: inherit;
 }
 
+/* Evita que el autofill del navegador tape el color del texto */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text);
+  -webkit-box-shadow: 0 0 0px 1000px var(--field) inset;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: var(--text);
+}
+
 /* ============================================================
    PANTALLA DE ACCESO (login / registro)
    — No tocar estas clases: las usa AuthForm.jsx —
@@ -213,7 +223,31 @@ input, button, select, textarea {
 
 @media (max-width: 880px) {
   .auth-visual { display: none; }
-  .auth-form-panel { width: 100%; padding: 0 28px; }
+  .auth-form-panel { width: 100%; padding: 0 32px; }
+}
+
+@media (max-width: 600px) {
+  /* Top bar: ocultar el texto central, solo mostrar tabs */
+  .top-centro { display: none; }
+  .top-izq    { font-size: 10px; letter-spacing: 1px; padding-left: 14px; }
+  .auth-top   { height: 48px; }
+  .tab        { padding: 0 20px; font-size: 10px; }
+
+  /* Formulario centrado verticalmente sin espacio muerto */
+  .auth-cuerpo   { align-items: center; }
+  .auth-form-panel {
+    padding: 36px 24px 32px;
+    justify-content: flex-start;
+  }
+
+  /* Título más compacto */
+  .form-titulo { font-size: 36px; margin-bottom: 24px; }
+  .form-eyebrow { font-size: 10px; margin-bottom: 12px; }
+
+  /* Inputs del formulario: más cómodos al tacto */
+  .campo input { padding: 15px 12px; font-size: 16px; }
+  .boton-principal { padding: 16px; font-size: 14px; }
+  .form-pie { margin-top: 20px; }
 }
 
 /* ============================================================
@@ -1592,13 +1626,12 @@ input, button, select, textarea {
   /* ── Pantalla Progreso / Calculadora: una columna ── */
   /* Se ajustan solos porque usan grid con minmax */
 
-  /* ── Modal backdrop: full screen en móvil ── */
-  .modal-backdrop { padding: 12px; align-items: flex-end; }
+  /* ── Modal: centrado con margen ── */
+  .modal-backdrop { padding: 20px; align-items: center; }
   .modal-caja {
-    max-height: 88vh;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+    max-height: 85vh;
     width: 100%;
+    border-radius: 16px;
   }
 
   /* ── Calculadora ── */
